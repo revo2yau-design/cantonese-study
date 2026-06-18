@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>廣東話自學素材 • 完整詞彙庫（分類版 + 地區景點）</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&amp;family=Inter:wght@400;500;600&amp;display=swap');
+        
+        body { font-family: 'Inter', 'Noto Sans TC', system-ui, -apple-system, sans-serif; }
+        
+        .word-card { transition: all 0.2s ease; }
+        .word-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1); }
+        
+        @media (max-width: 640px) {
+            #vocabulary-grid {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+            .word-card {
+                padding: 1rem !important;
+            }
+        }
+        
+        .category-btn { transition: all 0.2s ease; }
+        .category-btn.active { background-color: #166534; color: white; border-color: #166534; }
+        
+        .speak-btn { transition: all 0.2s ease; opacity: 0.75; }
+        .speak-btn:hover { opacity: 1; transform: scale(1.15); }
+        
+        .attraction-card {
+            transition: all 0.2s ease;
+        }
+        .attraction-card:hover {
+            background-color: #27251f;
+        }
+
+        /* Mobile font size reduction */
+        @media (max-width: 768px) {
+            .cantonese-text {
+                font-size: 1.25rem !important; /* smaller than text-2xl */
+            }
+            .word-card {
+                padding: 0.875rem !important;
+            }
+            .jyutping {
+                font-size: 0.95rem !important;
+            }
+            #category-list button {
+                padding-top: 0.5rem !important;
+                padding-bottom: 0.5rem !important;
+                font-size: 0.875rem !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-zinc-950 text-zinc-200">
+    <!-- Top Navigation -->
+    <nav class="border-b border-zinc-800 bg-zinc-900/90 backdrop-blur-lg sticky top-0 z-50">
+        <div class="max-w-screen-2xl mx-auto px-4 py-3 flex flex-col gap-y-2">
+            
+            <!-- Title Row -->
+            <div class="flex items-center justify-between">
+                <span class="font-semibold text-lg md:text-xl tracking-tight">廣東話自學素材</span>
+            </div>
+            
+            <!-- Buttons Row (Mobile friendly) -->
+            <div class="flex items-center justify-start gap-x-2 flex-wrap">
+                <button onclick="showContactModal()" 
+                        class="px-3 py-1 bg-sky-600 hover:bg-sky-700 text-white rounded-full text-xs font-medium border border-sky-500 transition-colors flex items-center gap-x-1.5 whitespace-nowrap">
+                    <i class="fa-solid fa-envelope text-xs"></i>
+                    <span>聯繫作者</span>
+                </button>
+
+                <button onclick="showDailyPhrasesModal()" 
+                        class="flex items-center gap-x-1.5 px-3 py-1 bg-sky-600 hover:bg-sky-700 text-white rounded-full text-xs font-medium transition-colors whitespace-nowrap">
+                    <i class="fa-solid fa-bolt text-xs"></i>
+                    <span>日常用句</span>
+                </button>
+
+                <button onclick="showErrorExplanationModal()" 
+                        class="flex items-center gap-x-1.5 px-3 py-1 bg-orange-600 hover:bg-orange-700 text-white rounded-full text-xs font-medium transition-colors whitespace-nowrap">
+                    <i class="fa-solid fa-volume-up text-xs"></i>
+                    <span>播放錯誤說明</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-screen-2xl mx-auto flex flex-col md:flex-row h-[calc(100vh-4rem)]">
+        
+        <!-- Mobile Sidebar Toggle Bar -->
+        <div class="md:hidden flex items-center justify-between px-4 py-2 bg-zinc-900 border-b border-zinc-800">
+            <button onclick="toggleMobileSidebar()" 
+                    class="flex items-center gap-x-2 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 rounded-xl text-sm active:bg-zinc-600">
+                <i class="fa-solid fa-bars"></i>
+                <span>分類</span>
+            </button>
+            <span class="text-xs text-zinc-500">點擊分類切換</span>
+        </div>
+        
+        <!-- LEFT SIDEBAR: Categories -->
+        <!-- On mobile: Overlay style | On desktop: Normal sidebar -->
+        <div id="sidebar" 
+             class="hidden md:flex fixed md:static inset-y-0 left-0 z-[60] w-72 md:w-72 border-r border-zinc-800 bg-zinc-900 flex-col overflow-hidden shadow-2xl md:shadow-none">
+            
+            <!-- Mobile Close Button -->
+            <div class="md:hidden flex justify-end p-3 border-b border-zinc-800">
+                <button onclick="toggleMobileSidebar()" class="text-zinc-400 hover:text-white p-2">
+                    <i class="fa-solid fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="p-5 border-b border-zinc-800">
+                <h2 class="font-semibold text-xl mb-1">詞彙分類</h2>
+                <p class="text-xs text-zinc-500">按用法分類 • 點擊切換</p>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-3 space-y-1" id="category-list">
+                <!-- Populated by JS -->
+            </div>
+            
+            <div class="p-4 border-t border-zinc-800 bg-zinc-950 flex-shrink-0">
+                <button onclick="showAllWords()" 
+                        class="w-full flex items-center justify-center gap-x-2 px-4 py-3 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-2xl text-sm font-medium transition-colors">
+                    <i class="fa-solid fa-list"></i>
+                    <span>顯示全部詞彙</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- MAIN CONTENT: Vocabulary Grid -->
+        <div class="flex-1 flex flex-col min-w-0">
+            
+            <div class="h-14 border-b border-zinc-800 px-6 flex items-center justify-between bg-zinc-900/60">
+                <div class="flex items-center gap-x-3">
+                    <h3 id="current-category-title" class="font-semibold text-sm md:text-base">全部詞彙</h3>
+                    <span id="district-reminder" class="hidden text-xs px-2.5 py-1 bg-sky-600 text-white rounded-full font-medium flex items-center gap-x-1">
+                        <i class="fa-solid fa-map-marker-alt text-[10px]"></i>
+                        <span>點擊地區可查看該區著名景點與地方</span>
+                    </span>
+                </div>
+                
+                <div class="flex items-center gap-x-3">
+                    <div class="relative w-full md:w-64">
+                        <input id="main-search" type="text" placeholder="搜尋詞彙、Jyutping 或例句..." 
+                               onkeyup="filterMainGrid()"
+                               class="w-full bg-zinc-800 border border-zinc-700 focus:border-sky-500 rounded-2xl px-4 py-2 text-sm pl-10">
+                        <i class="fa-solid fa-search absolute left-4 top-3 text-zinc-500"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-4 md:p-6 bg-zinc-950" id="vocabulary-grid">
+                <!-- Populated dynamically by JS -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Contact Author Modal -->
+    <div id="contact-modal" onclick="if (event.target.id === 'contact-modal') hideContactModal()" 
+         class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-[120] flex items-center justify-center p-4">
+        <div onclick="event.stopImmediatePropagation()" 
+             class="bg-zinc-900 border border-zinc-700 w-full max-w-md rounded-3xl shadow-2xl p-8 text-center">
+            
+            <div class="mb-6">
+                <img src="icon.jpg" class="w-28 h-28 rounded-full mx-auto mb-4 object-cover border-2 border-sky-500" alt="作者頭像">
+                <h2 class="text-2xl font-semibold">聯繫作者</h2>
+                <p class="text-zinc-400 text-sm mt-1">有問題或合作歡迎聯絡</p>
+            </div>
+
+            <div class="space-y-4 text-left">
+                <!-- Email -->
+                <div class="flex items-center gap-x-3 p-4 bg-zinc-800 rounded-2xl border border-zinc-700">
+                    <i class="fa-solid fa-envelope text-sky-400 w-5"></i>
+                    <div class="flex-1">
+                        <div class="text-xs text-zinc-400">Email</div>
+                        <span class="text-white">revo2yau@gmail.com</span>
+                    </div>
+                </div>
+
+                <!-- IG / Threads -->
+                <div class="flex items-center gap-x-3 p-4 bg-zinc-800 rounded-2xl border border-zinc-700">
+                    <i class="fa-brands fa-instagram text-sky-400 w-5"></i>
+                    <div class="flex-1">
+                        <div class="text-xs text-zinc-400">IG / Threads</div>
+                        <span class="text-white">@12zcbb5</span>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="hideContactModal()" 
+                    class="mt-8 w-full py-3 bg-zinc-700 hover:bg-zinc-600 rounded-2xl text-sm font-medium transition-colors">
+                關閉
+            </button>
+        </div>
+    </div>
+
+    <!-- Speech Playback Troubleshooting Modal -->
+    <div id="speech-troubleshoot-modal" onclick="if (event.target.id === 'speech-troubleshoot-modal') hideSpeechTroubleshootModal()" 
+         class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-[130] flex items-center justify-center p-4">
+        <div onclick="event.stopImmediatePropagation()" 
+             class="bg-zinc-900 border border-zinc-700 w-full max-w-lg rounded-3xl shadow-2xl p-8">
+            
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-semibold flex items-center gap-x-2">
+                        <i class="fa-solid fa-question-circle text-amber-400"></i>
+                        <span>語音播放疑難排解</span>
+                    </h2>
+                    <p class="text-zinc-400 text-sm mt-1">為什麼聽不到粵語？</p>
+                </div>
+                <button onclick="hideSpeechTroubleshootModal()" class="text-zinc-400 hover:text-white">
+                    <i class="fa-solid fa-times text-2xl"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4 text-sm text-zinc-300">
+                <p class="font-medium text-amber-300">如果無法正確發音，請依照以下步驟操作：</p>
+
+                <div>
+                    <p class="font-semibold mb-1">1. 優先建議：</p>
+                    <p>請使用 <span class="font-semibold text-white">Google Chrome 瀏覽器</span> 開啟本網頁，通常能自動修正發音。</p>
+                </div>
+
+                <div>
+                    <p class="font-semibold mb-1">2. 如果無法使用 Chrome，請依照以下步驟操作：</p>
+                    
+                    <div class="ml-2 space-y-3 mt-2">
+                        <div>
+                            <p class="font-medium text-sky-300">iPhone / iPad 用戶：</p>
+                            <p class="text-xs">進入手機「設定」 > 「輔助使用」 > 「旁白」 > 「語音」 > 「聲音」，點選並下載 「中文（香港）」 語音。</p>
+                        </div>
+                        
+                        <div>
+                            <p class="font-medium text-sky-300">Android 用戶：</p>
+                            <p class="text-xs">進入手機「設定」 > 「文字轉語音輸出」 > 點擊偏好引擎旁的「齒輪圖示」 > 「安裝語音資料」，下載 「粵語（香港）」。</p>
+                        </div>
+                        
+                        <div>
+                            <p class="font-medium text-sky-300">Windows 電腦用戶：</p>
+                            <p class="text-xs">進入「設定」 > 「時間與語言」 > 「語言」 > 「新增語言」，安裝 「中文（香港）」，並務必勾選安裝 「文字轉語音」 功能。</p>
+                        </div>
+                        
+                        <div>
+                            <p class="font-medium text-sky-300">Mac 電腦用戶：</p>
+                            <p class="text-xs">進入「系統設定」 > 「輔助使用」 > 「語音內容」 > 系統聲音選擇「管理聲音」，下載 「粵語」。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="hideSpeechTroubleshootModal()" 
+                    class="mt-6 w-full py-2.5 bg-zinc-700 hover:bg-zinc-600 rounded-2xl text-sm font-medium transition-colors">
+                我知道了
+            </button>
+        </div>
+    </div>
+
+    <!-- District Attractions Modal -->
+    <div id="district-modal" onclick="if (event.target.id === 'district-modal') hideDistrictModal()" 
+         class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
+        <div onclick="event.stopImmediatePropagation()" 
+             class="bg-zinc-900 border border-zinc-700 w-full max-w-4xl rounded-3xl shadow-2xl max-h-[90vh] flex flex-col">
+            
+            <div class="px-6 pt-5 pb-4 border-b border-zinc-700 flex items-center justify-between">
+                <div>
+                    <span id="district-modal-title" class="font-semibold text-2xl"></span>
+                    <span id="district-modal-jyutping" class="ml-3 text-sky-400 jyutping text-xl"></span>
+                </div>
+                <button onclick="hideDistrictModal()" class="text-zinc-400 hover:text-white w-9 h-9 flex items-center justify-center">
+                    <i class="fa-solid fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 flex-1 overflow-auto">
+                <div class="mb-4">
+                    <span class="text-sky-400 font-medium">著名景點與地方</span>
+                </div>
+                <div id="district-attractions" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+            
+            <div class="px-6 py-4 border-t border-zinc-700 text-xs text-zinc-500">
+                點擊 <i class="fa-solid fa-volume-up text-sky-400"></i> 可聽取發音
+            </div>
+        </div>
+    </div>
+    
+    <!-- High Frequency Phrases Modal -->
+    <div id="high-frequency-modal" onclick="if (event.target.id === 'high-frequency-modal') hideHighFrequencyModal()" 
+         class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+        <div onclick="event.stopImmediatePropagation()" 
+             class="bg-zinc-900 border border-zinc-700 w-full max-w-3xl rounded-3xl shadow-2xl max-h-[85vh] flex flex-col">
+            
+            <div class="px-6 pt-5 pb-4 border-b border-zinc-700 flex items-center justify-between">
+                <div class="flex items-center gap-x-3">
+                    <i class="fa-solid fa-bolt text-yellow-400 text-xl"></i>
+                    <span class="font-semibold text-xl">日常用句</span>
+                </div>
+                <button onclick="hideDailyPhrasesModal()" class="text-zinc-400 hover:text-white w-9 h-9 flex items-center justify-center">
+                    <i class="fa-solid fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 flex-1 overflow-auto">
+                <div id="high-frequency-content" class="space-y-4"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // ==================== 詞庫數據 ====================
+        const dictionary = [
+            // 問候與禮貌 (35)
+            { word: "你好", jyutping: "nei5 hou2", mandarin: "你好", english: "Hello", category: "問候與禮貌", example: "你好，我係阿明。", example_jyutping: "nei5 hou2, ngo5 hai6 aa3 ming4.", tip: "最基本問候" },
+            { word: "早晨", jyutping: "zou2 san4", mandarin: "早上好", english: "Good morning", category: "問候與禮貌", example: "早晨！今日天氣好好。", example_jyutping: "zou2 san4! gam1 jat6 tin1 hei3 hou2 hou2.", tip: "只限早上使用" },
+            { word: "早唞", jyutping: "zou2 tau2", mandarin: "早點休息 / 晚安", english: "Good night / Sleep well", category: "問候與禮貌", example: "早唞，瞓覺啦。", example_jyutping: "zou2 tau2, fan3 gaau3 laa1.", tip: "香港人常用道別" },
+            { word: "拜拜", jyutping: "baai1 baai3", mandarin: "拜拜", english: "Bye bye", category: "問候與禮貌", example: "拜拜！聽日見。", example_jyutping: "baai1 baai3! ting1 jat6 gin3.", tip: "最常用道別" },
+            { word: "再見", jyutping: "zoi3 gin3", mandarin: "再見", english: "Goodbye", category: "問候與禮貌", example: "再見！", example_jyutping: "zoi3 gin3!", tip: "較正式" },
+            { word: "唔該", jyutping: "m4 goi1", mandarin: "麻煩你 / 謝謝", english: "Excuse me / Thanks", category: "問候與禮貌", example: "唔該，一杯奶茶。", example_jyutping: "m4 goi1, jat1 bui1 naai5 caa4.", tip: "茶餐廳最常用" },
+            { word: "多謝", jyutping: "do1 ze6", mandarin: "謝謝", english: "Thank you", category: "問候與禮貌", example: "多謝晒！", example_jyutping: "do1 ze6 saai3!", tip: "正式感謝" },
+            { word: "冇唔該", jyutping: "mou5 m4 goi1", mandarin: "不客氣", english: "You're welcome", category: "問候與禮貌", example: "冇唔該！", example_jyutping: "mou5 m4 goi1!", tip: "對應多謝" },
+            { word: "對唔住", jyutping: "deoi3 m4 zyu6", mandarin: "對不起", english: "Sorry", category: "問候與禮貌", example: "對唔住，我遲咗。", example_jyutping: "deoi3 m4 zyu6, ngo5 ci4 zo2.", tip: "道歉用語" },
+            { word: "冇問題", jyutping: "mou5 man6 tai4", mandarin: "沒問題", english: "No problem", category: "問候與禮貌", example: "冇問題，慢慢嚟。", example_jyutping: "mou5 man6 tai4, maan6 maan6 lei4.", tip: "常用回應" },
+            { word: "唔使客氣", jyutping: "m4 sai2 haak3 hei3", mandarin: "不用客氣", english: "No need to be polite", category: "問候與禮貌", example: "唔使客氣！", example_jyutping: "m4 sai2 haak3 hei3!", tip: "安慰對方" },
+            { word: "辛苦晒", jyutping: "san1 fu2 saai3", mandarin: "辛苦了", english: "Thank you for your hard work", category: "問候與禮貌", example: "辛苦晒！", example_jyutping: "san1 fu2 saai3!", tip: "感謝別人幫忙" },
+            { word: "多謝晒", jyutping: "do1 ze6 saai3", mandarin: "非常感謝", english: "Thank you very much", category: "問候與禮貌", example: "多謝晒！", example_jyutping: "do1 ze6 saai3!", tip: "加強版感謝" },
+            { word: "唔該晒", jyutping: "m4 goi1 saai3", mandarin: "非常麻煩你", english: "Thank you so much", category: "問候與禮貌", example: "唔該晒！", example_jyutping: "m4 goi1 saai3!", tip: "加強版唔該" },
+            { word: "係咁先", jyutping: "hai6 gam2 sin1", mandarin: "就這樣吧", english: "That's it for now", category: "問候與禮貌", example: "係咁先，聽日再傾。", example_jyutping: "hai6 gam2 sin1, ting1 jat6 zoi3 king1.", tip: "結束對話" },
+            { word: "聽日見", jyutping: "ting1 jat6 gin3", mandarin: "明天見", english: "See you tomorrow", category: "問候與禮貌", example: "聽日見！", example_jyutping: "ting1 jat6 gin3!", tip: "道別" },
+            { word: "有咩事", jyutping: "jau5 me1 si6", mandarin: "有什麼事", english: "What's the matter?", category: "問候與禮貌", example: "有咩事呀？", example_jyutping: "jau5 me1 si6 aa3?", tip: "關心對方" },
+            { word: "冇事", jyutping: "mou5 si6", mandarin: "沒事", english: "Nothing", category: "問候與禮貌", example: "冇事，隨便問吓。", example_jyutping: "mou5 si6, ceoi4 bin2 man6 haa5.", tip: "回應關心" },
+            { word: "多謝你", jyutping: "do1 ze6 nei5", mandarin: "謝謝你", english: "Thank you", category: "問候與禮貌", example: "多謝你幫我。", example_jyutping: "do1 ze6 nei5 bong1 ngo5.", tip: "直接感謝" },
+            { word: "唔該你", jyutping: "m4 goi1 nei5", mandarin: "麻煩你了", english: "Thank you for your help", category: "問候與禮貌", example: "唔該你啦！", example_jyutping: "m4 goi1 nei5 laa1!", tip: "感謝幫助" },
+            { word: "辛苦你", jyutping: "san1 fu2 nei5", mandarin: "辛苦你了", english: "Thank you for your effort", category: "問候與禮貌", example: "辛苦你幫手。", example_jyutping: "san1 fu2 nei5 bong1 sau2.", tip: "感謝付出" },
+            { word: "好心", jyutping: "hou2 sam1", mandarin: "好心", english: "Kind-hearted", category: "問候與禮貌", example: "佢好心幫我。", example_jyutping: "keoi5 hou2 sam1 bong1 ngo5.", tip: "形容人好" },
+            { word: "唔好意思", jyutping: "m4 hou2 ji3 si1", mandarin: "不好意思", english: "Sorry / Excuse me", category: "問候與禮貌", example: "唔好意思，借過。", example_jyutping: "m4 hou2 ji3 si1, ze3 gwo3.", tip: "道歉或請求讓路" },
+            { word: "借過", jyutping: "ze3 gwo3", mandarin: "借過", english: "Excuse me (passing)", category: "問候與禮貌", example: "唔該，借過。", example_jyutping: "m4 goi1, ze3 gwo3.", tip: "請求讓路" },
+            { word: "唔使", jyutping: "m4 sai2", mandarin: "不用", english: "No need", category: "問候與禮貌", example: "唔使客氣。", example_jyutping: "m4 sai2 haak3 hei3.", tip: "不用" },
+            { word: "多謝晒你", jyutping: "do1 ze6 saai3 nei5", mandarin: "非常感謝你", english: "Thank you very much", category: "問候與禮貌", example: "多謝晒你！", example_jyutping: "do1 ze6 saai3 nei5!", tip: "加強感謝" },
+            { word: "唔該晒你", jyutping: "m4 goi1 saai3 nei5", mandarin: "非常麻煩你", english: "Thank you so much", category: "問候與禮貌", example: "唔該晒你！", example_jyutping: "m4 goi1 saai3 nei5!", tip: "加強版" },
+            { word: "冇問題啦", jyutping: "mou5 man6 tai4 laa1", mandarin: "沒問題啦", english: "No problem", category: "問候與禮貌", example: "冇問題啦！", example_jyutping: "mou5 man6 tai4 laa1!", tip: "輕鬆回應" },
+
+            // 飲食與茶餐廳 (45)
+            { word: "食飯", jyutping: "sik6 faan6", mandarin: "吃飯", english: "Eat meal", category: "飲食與茶餐廳", example: "你食飯未呀？", example_jyutping: "nei5 sik6 faan6 mei6 aa3?", tip: "香港人常用問候" },
+            { word: "飲茶", jyutping: "jam2 caa4", mandarin: "喝茶 / 飲茶", english: "Drink tea / Yum cha", category: "飲食與茶餐廳", example: "聽日去飲茶。", example_jyutping: "ting1 jat6 heoi3 jam2 caa4.", tip: "香港文化" },
+            { word: "奶茶", jyutping: "naai5 caa4", mandarin: "奶茶", english: "Milk tea", category: "飲食與茶餐廳", example: "一杯奶茶。", example_jyutping: "jat1 bui1 naai5 caa4.", tip: "茶餐廳經典" },
+            { word: "走", jyutping: "zau2", mandarin: "外帶 / 走", english: "To go", category: "飲食與茶餐廳", example: "奶茶走。", example_jyutping: "naai5 caa4 zau2.", tip: "茶餐廳 takeaway" },
+            { word: "喺度飲", jyutping: "hai2 dou6 jam2", mandarin: "在這裡喝", english: "Drink here", category: "飲食與茶餐廳", example: "唔使走，喺度飲。", example_jyutping: "m4 sai2 zau2, hai2 dou6 jam2.", tip: "堂食" },
+            { word: "加多啲糖", jyutping: "gaa1 do1 di1 tong4", mandarin: "多加點糖", english: "Add more sugar", category: "飲食與茶餐廳", example: "加多啲糖，唔該。", example_jyutping: "gaa1 do1 di1 tong4, m4 goi1.", tip: "客製化" },
+            { word: "走糖", jyutping: "zau2 tong4", mandarin: "不要糖", english: "No sugar", category: "飲食與茶餐廳", example: "奶茶走糖。", example_jyutping: "naai5 caa4 zau2 tong4.", tip: "少糖" },
+            { word: "熱奶茶", jyutping: "jit6 naai5 caa4", mandarin: "熱奶茶", english: "Hot milk tea", category: "飲食與茶餐廳", example: "一杯熱奶茶。", example_jyutping: "jat1 bui1 jit6 naai5 caa4.", tip: "指定溫度" },
+            { word: "凍奶茶", jyutping: "dung3 naai5 caa4", mandarin: "凍奶茶", english: "Iced milk tea", category: "飲食與茶餐廳", example: "凍奶茶走。", example_jyutping: "dung3 naai5 caa4 zau2.", tip: "指定溫度" },
+            { word: "菠蘿油", jyutping: "bo1 lo4 jau4", mandarin: "菠蘿油", english: "Pineapple bun with butter", category: "飲食與茶餐廳", example: "一個菠蘿油。", example_jyutping: "jat1 go3 bo1 lo4 jau4.", tip: "茶餐廳名物" },
+            { word: "西多士", jyutping: "sai1 do1 si6", mandarin: "西多士", english: "French toast", category: "飲食與茶餐廳", example: "西多士加奶。", tip: "經典早餐" },
+            { word: "炒飯", jyutping: "caau2 faan6", mandarin: "炒飯", english: "Fried rice", category: "飲食與茶餐廳", example: "揚州炒飯。", tip: "主食" },
+            { word: "雲吞麵", jyutping: "wan4 tan1 min6", mandarin: "雲吞麵", english: "Wonton noodles", category: "飲食與茶餐廳", example: "一碗雲吞麵。", tip: "香港經典" },
+            { word: "牛腩麵", jyutping: "ngau4 naam5 min6", mandarin: "牛腩麵", english: "Beef brisket noodles", category: "飲食與茶餐廳", example: "牛腩麵唔該。", tip: "常見選擇" },
+            { word: "腸粉", jyutping: "coeng4 fan2", mandarin: "腸粉", english: "Rice noodle roll", category: "飲食與茶餐廳", example: "豬腸粉。", tip: "點心" },
+            { word: "點心", jyutping: "dim2 sam1", mandarin: "點心", english: "Dim sum", category: "飲食與茶餐廳", example: "食點心。", tip: "飲茶必點" },
+            { word: "叉燒", jyutping: "caa1 siu1", mandarin: "叉燒", english: "Char siu", category: "飲食與茶餐廳", example: "叉燒飯。", tip: "常見餡料" },
+            { word: "燒賣", jyutping: "siu1 maai2", mandarin: "燒賣", english: "Siu mai", category: "飲食與茶餐廳", example: "燒賣。", tip: "點心" },
+            { word: "蝦餃", jyutping: "haa1 gaau2", mandarin: "蝦餃", english: "Har gow", category: "飲食與茶餐廳", example: "蝦餃。", tip: "點心" },
+            { word: "蛋撻", jyutping: "daan6 taat1", mandarin: "蛋撻", english: "Egg tart", category: "飲食與茶餐廳", example: "蛋撻。", tip: "甜品" },
+            { word: "奶黃包", jyutping: "naai5 wong4 baau1", mandarin: "奶黃包", english: "Custard bun", category: "飲食與茶餐廳", example: "奶黃包。", tip: "甜品" },
+            { word: "絲襪奶茶", jyutping: "si1 mat6 naai5 caa4", mandarin: "絲襪奶茶", english: "Silk stocking milk tea", category: "飲食與茶餐廳", example: "絲襪奶茶。", tip: "傳統做法" },
+            { word: "檸檬茶", jyutping: "ning4 mung1 caa4", mandarin: "檸檬茶", english: "Lemon tea", category: "飲食與茶餐廳", example: "凍檸檬茶。", tip: "清新選擇" },
+            { word: "凍檸茶", jyutping: "dung3 ning4 caa4", mandarin: "凍檸茶", english: "Iced lemon tea", category: "飲食與茶餐廳", example: "凍檸茶走。", tip: "常見飲品" },
+            { word: "鴛鴦", jyutping: "jyun1 joeng1", mandarin: "鴛鴦", english: "Yuan yang (coffee + tea)", category: "飲食與茶餐廳", example: "一杯鴛鴦。", tip: "香港獨有" },
+            { word: "走冰", jyutping: "zau2 bing1", mandarin: "不要冰", english: "No ice", category: "飲食與茶餐廳", example: "凍奶茶走冰。", tip: "調整飲品" },
+            { word: "加冰", jyutping: "gaa1 bing1", mandarin: "加冰", english: "Add ice", category: "飲食與茶餐廳", example: "加多啲冰。", tip: "調整飲品" },
+            { word: "熱", jyutping: "jit6", mandarin: "熱的", english: "Hot", category: "飲食與茶餐廳", example: "熱奶茶。", tip: "指定溫度" },
+            { word: "凍", jyutping: "dung3", mandarin: "凍的", english: "Cold / Iced", category: "飲食與茶餐廳", example: "凍檸茶。", tip: "指定溫度" },
+            { word: "走奶", jyutping: "zau2 naai5", mandarin: "不要奶", english: "No milk", category: "飲食與茶餐廳", example: "檸檬茶走奶。", tip: "調整" },
+            { word: "加奶", jyutping: "gaa1 naai5", mandarin: "加奶", english: "Add milk", category: "飲食與茶餐廳", example: "加奶。", tip: "調整" },
+            { word: "少糖", jyutping: "siu2 tong4", mandarin: "少糖", english: "Less sugar", category: "飲食與茶餐廳", example: "少糖。", tip: "健康選擇" },
+            { word: "正常糖", jyutping: "zing3 soeng4 tong4", mandarin: "正常糖", english: "Normal sugar", category: "飲食與茶餐廳", example: "正常糖。", tip: "預設" },
+            { word: "多糖", jyutping: "do1 tong4", mandarin: "多糖", english: "More sugar", category: "飲食與茶餐廳", example: "多糖。", tip: "甜食愛好者" },
+            { word: "菠蘿包", jyutping: "bo1 lo4 baau1", mandarin: "菠蘿包", english: "Pineapple bun", category: "飲食與茶餐廳", example: "一個菠蘿包。", tip: "經典" },
+            { word: "揚州炒飯", jyutping: "joeng4 zau1 caau2 faan6", mandarin: "揚州炒飯", english: "Yangzhou fried rice", category: "飲食與茶餐廳", example: "揚州炒飯。", tip: "經典炒飯" },
+            { word: "豬腸粉", jyutping: "zyu1 coeng4 fan2", mandarin: "豬腸粉", english: "Pork rice noodle roll", category: "飲食與茶餐廳", example: "豬腸粉。", tip: "常見腸粉" },
+            { word: "牛肉腸粉", jyutping: "ngau4 juk6 coeng4 fan2", mandarin: "牛肉腸粉", english: "Beef rice noodle roll", category: "飲食與茶餐廳", example: "牛肉腸粉。", tip: "常見腸粉" },
+            { word: "蝦腸粉", jyutping: "haa1 coeng4 fan2", mandarin: "蝦腸粉", english: "Shrimp rice noodle roll", category: "飲食與茶餐廳", example: "蝦腸粉。", tip: "常見腸粉" },
+            { word: "叉燒包", jyutping: "caa1 siu1 baau1", mandarin: "叉燒包", english: "Char siu bun", category: "飲食與茶餐廳", example: "叉燒包。", tip: "點心" },
+            { word: "蓮蓉包", jyutping: "lin4 jung4 baau1", mandarin: "蓮蓉包", english: "Lotus seed paste bun", category: "飲食與茶餐廳", example: "蓮蓉包。", tip: "甜品" },
+            { word: "雞蛋仔", jyutping: "gai1 daan6 zai2", mandarin: "雞蛋仔", english: "Egg waffle", category: "飲食與茶餐廳", example: "雞蛋仔。", tip: "街頭小食" },
+            { word: "魚蛋", jyutping: "jyu4 daan6", mandarin: "魚蛋", english: "Fish ball", category: "飲食與茶餐廳", example: "魚蛋。", tip: "街頭小食" },
+            { word: "牛腩", jyutping: "ngau4 naam5", mandarin: "牛腩", english: "Beef brisket", category: "飲食與茶餐廳", example: "牛腩麵。", tip: "常見材料" },
+            { word: "絲襪奶茶", jyutping: "si1 mat6 naai5 caa4", mandarin: "絲襪奶茶", english: "Silk stocking milk tea", category: "飲食與茶餐廳", example: "絲襪奶茶。", tip: "傳統做法" },
+
+            // 購物與金錢 (25)
+            { word: "幾錢", jyutping: "gei2 cin2", mandarin: "多少錢", english: "How much", category: "購物與金錢", example: "呢個幾錢？", example_jyutping: "ni1 go3 gei2 cin2?", tip: "購物必備" },
+            { word: "平", jyutping: "peng4", mandarin: "便宜", english: "Cheap", category: "購物與金錢", example: "呢個平唔平？", example_jyutping: "ni1 go3 peng4 m4 peng4?", tip: "詢問價格" },
+            { word: "貴", jyutping: "gwai3", mandarin: "貴", english: "Expensive", category: "購物與金錢", example: "太貴啦。", example_jyutping: "taai3 gwai3 laa1.", tip: "覺得貴" },
+            { word: "平啲", jyutping: "peng4 di1", mandarin: "便宜一點", english: "Cheaper", category: "購物與金錢", example: "平啲得唔得？", example_jyutping: "peng4 di1 dak1 m4 dak1?", tip: "討價還價" },
+            { word: "減價", jyutping: "gaam2 gaa3", mandarin: "減價", english: "Discount", category: "購物與金錢", example: "而家減價。", example_jyutping: "ji4 gaa1 gaam2 gaa3.", tip: "促銷" },
+            { word: "買", jyutping: "maai5", mandarin: "買", english: "Buy", category: "購物與金錢", example: "我想買呢個。", example_jyutping: "ngo5 soeng2 maai5 ni1 go3.", tip: "購買動作" },
+            { word: "賣", jyutping: "maai6", mandarin: "賣", english: "Sell", category: "購物與金錢", example: "呢個賣幾錢？", example_jyutping: "ni1 go3 maai6 gei2 cin2?", tip: "詢問售價" },
+            { word: "收錢", jyutping: "sau1 cin2", mandarin: "收錢", english: "Receive money", category: "購物與金錢", example: "收錢。", example_jyutping: "sau1 cin2.", tip: "付錢動作" },
+            { word: "找錢", jyutping: "zaau2 cin2", mandarin: "找錢", english: "Change", category: "購物與金錢", example: "唔該找錢。", example_jyutping: "m4 goi1 zaau2 cin2.", tip: "找零" },
+            { word: "現金", jyutping: "jin6 gam1", mandarin: "現金", english: "Cash", category: "購物與金錢", example: "現金定信用卡？", example_jyutping: "jin6 gam1 ding6 seon3 jung6 kaat1?", tip: "支付方式" },
+            { word: "信用卡", jyutping: "seon3 jung6 kaat1", mandarin: "信用卡", english: "Credit card", category: "購物與金錢", example: "可以用信用卡嗎？", example_jyutping: "ho2 ji5 jung6 seon3 jung6 kaat1 maa3?", tip: "支付方式" },
+            { word: "八達通", jyutping: "baat3 daat6 tung1", mandarin: "八達通", english: "Octopus card", category: "購物與金錢", example: "用八達通。", example_jyutping: "jung6 baat3 daat6 tung1.", tip: "香港常用" },
+            { word: "平靚正", jyutping: "peng4 leng3 zing3", mandarin: "平靚正", english: "Cheap, good looking, good quality", category: "購物與金錢", example: "呢個平靚正。", example_jyutping: "ni1 go3 peng4 leng3 zing3.", tip: "香港用語" },
+            { word: "抵買", jyutping: "dai2 maai5", mandarin: "抵買", english: "Worth buying", category: "購物與金錢", example: "呢個抵買。", example_jyutping: "ni1 go3 dai2 maai5.", tip: "划算" },
+            { word: "著數", jyutping: "zoek3 sou3", mandarin: "著數", english: "Worth it / Good deal", category: "購物與金錢", example: "好著數。", example_jyutping: "hou2 zoek3 sou3.", tip: "划算" },
+            { word: "唔抵", jyutping: "m4 dai2", mandarin: "不抵", english: "Not worth it", category: "購物與金錢", example: "唔抵買。", example_jyutping: "m4 dai2 maai5.", tip: "不划算" },
+            { word: "講價", jyutping: "gong2 gaa3", mandarin: "講價", english: "Bargain", category: "購物與金錢", example: "可唔可以講價？", example_jyutping: "ho2 m4 ho2 ji5 gong2 gaa3?", tip: "討價還價" },
+            { word: "最平", jyutping: "zeoi3 peng4", mandarin: "最便宜", english: "Cheapest", category: "購物與金錢", example: "呢個最平。", example_jyutping: "ni1 go3 zeoi3 peng4.", tip: "比較價格" },
+            { word: "貴咗", jyutping: "gwai3 zo2", mandarin: "貴了", english: "More expensive", category: "購物與金錢", example: "貴咗好多。", example_jyutping: "gwai3 zo2 hou2 do1.", tip: "價格上升" },
+            { word: "平咗", jyutping: "peng4 zo2", mandarin: "便宜了", english: "Cheaper", category: "購物與金錢", example: "平咗。", example_jyutping: "peng4 zo2.", tip: "價格下降" },
+            { word: "平過", jyutping: "peng4 gwo3", mandarin: "比...便宜", english: "Cheaper than", category: "購物與金錢", example: "呢個平過嗰個。", example_jyutping: "ni1 go3 peng4 gwo3 go2 go3.", tip: "比較" },
+            { word: "貴過", jyutping: "gwai3 gwo3", mandarin: "比...貴", english: "More expensive than", category: "購物與金錢", example: "呢個貴過嗰個。", example_jyutping: "ni1 go3 gwai3 gwo3 go2 go3.", tip: "比較" },
+            { word: "幾錢一個", jyutping: "gei2 cin2 jat1 go3", mandarin: "一個多少錢", english: "How much each", category: "購物與金錢", example: "呢個幾錢一個？", example_jyutping: "ni1 go3 gei2 cin2 jat1 go3?", tip: "問單價" },
+            { word: "幾錢一斤", jyutping: "gei2 cin2 jat1 gan1", mandarin: "一斤多少錢", english: "How much per catty", category: "購物與金錢", example: "呢個幾錢一斤？", example_jyutping: "ni1 go3 gei2 cin2 jat1 gan1?", tip: "市場用語" },
+            { word: "平啲啦", jyutping: "peng4 di1 laa1", mandarin: "便宜一點啦", english: "Make it cheaper", category: "購物與金錢", example: "平啲啦！", example_jyutping: "peng4 di1 laa1!", tip: "討價還價" },
+
+            // 交通與問路 (25)
+            { word: "去", jyutping: "heoi3", mandarin: "去", english: "Go to", category: "交通與問路", example: "去中環。", example_jyutping: "heoi3 zung1 waan4.", tip: "方向" },
+            { word: "點行", jyutping: "dim2 haang4", mandarin: "怎麼走", english: "How to go", category: "交通與問路", example: "去中環點行？", example_jyutping: "heoi3 zung1 waan4 dim2 haang4?", tip: "問路" },
+            { word: "中環", jyutping: "zung1 waan4", mandarin: "中環", english: "Central", category: "交通與問路", example: "去中環。", example_jyutping: "heoi3 zung1 waan4.", tip: "地點" },
+            { word: "尖沙咀", jyutping: "zim1 saa1 zeoi2", mandarin: "尖沙咀", english: "Tsim Sha Tsui", category: "交通與問路", example: "去尖沙咀。", example_jyutping: "heoi3 zim1 saa1 zeoi2.", tip: "熱門地點" },
+            { word: "旺角", jyutping: "wong6 gok3", mandarin: "旺角", english: "Mong Kok", category: "交通與問路", example: "去旺角。", example_jyutping: "heoi3 wong6 gok3.", tip: "熱門地點" },
+            { word: "地鐵", jyutping: "dei6 tit3", mandarin: "地鐵", english: "MTR", category: "交通與問路", example: "搭地鐵。", example_jyutping: "daap3 dei6 tit3.", tip: "主要交通工具" },
+            { word: "巴士", jyutping: "baa1 si2", mandarin: "巴士", english: "Bus", category: "交通與問路", example: "搭巴士。", example_jyutping: "daap3 baa1 si2.", tip: "交通工具" },
+            { word: "的士", jyutping: "dik1 si2", mandarin: "的士", english: "Taxi", category: "交通與問路", example: "搭的士。", example_jyutping: "daap3 dik1 si2.", tip: "交通工具" },
+            { word: "小巴", jyutping: "siu2 baa1", mandarin: "小巴", english: "Minibus", category: "交通與問路", example: "搭小巴。", example_jyutping: "daap3 siu2 baa1.", tip: "香港特色" },
+            { word: "轉車", jyutping: "zyun3 ce1", mandarin: "轉車", english: "Transfer", category: "交通與問路", example: "要轉車嗎？", example_jyutping: "jiu3 zyun3 ce1 maa3?", tip: "轉乘" },
+            { word: "落車", jyutping: "lok6 ce1", mandarin: "下車", english: "Get off", category: "交通與問路", example: "下站落車。", example_jyutping: "haa6 zaam6 lok6 ce1.", tip: "下車動作" },
+            { word: "上車", jyutping: "soeng5 ce1", mandarin: "上車", english: "Get on", category: "交通與問路", example: "快啲上車。", example_jyutping: "faai3 di1 soeng5 ce1.", tip: "上車動作" },
+            { word: "幾多站", jyutping: "gei2 do1 zaam6", mandarin: "多少站", english: "How many stops", category: "交通與問路", example: "幾多站？", example_jyutping: "gei2 do1 zaam6?", tip: "問站數" },
+            { word: "下一站", jyutping: "haa6 jat1 zaam6", mandarin: "下一站", english: "Next stop", category: "交通與問路", example: "下一站係邊？", example_jyutping: "haa6 jat1 zaam6 hai6 bin1?", tip: "問站名" },
+            { word: "邊度", jyutping: "bin1 dou6", mandarin: "哪裡", english: "Where", category: "交通與問路", example: "洗手間喺邊度？", example_jyutping: "sai2 sau2 gaan1 hai2 bin1 dou6?", tip: "問位置" },
+            { word: "遠唔遠", jyutping: "jyun5 m4 jyun5", mandarin: "遠不遠", english: "Is it far?", category: "交通與問路", example: "遠唔遠？", example_jyutping: "jyun5 m4 jyun5?", tip: "問距離" },
+            { word: "行得去", jyutping: "haang4 dak1 heoi3", mandarin: "走得去", english: "Can walk there", category: "交通與問路", example: "行得去嗎？", example_jyutping: "haang4 dak1 heoi3 maa3?", tip: "問是否可步行" },
+            { word: "搭", jyutping: "daap3", mandarin: "搭", english: "Take (transport)", category: "交通與問路", example: "搭地鐵。", example_jyutping: "daap3 dei6 tit3.", tip: "搭乘" },
+            { word: "行", jyutping: "haang4", mandarin: "走路", english: "Walk", category: "交通與問路", example: "行過去。", example_jyutping: "haang4 gwo3 heoi3.", tip: "步行" },
+            { word: "幾耐", jyutping: "gei2 noi6", mandarin: "多久", english: "How long", category: "交通與問路", example: "幾耐先到？", example_jyutping: "gei2 noi6 sin1 dou3?", tip: "問時間" },
+            { word: "塞車", jyutping: "sak1 ce1", mandarin: "塞車", english: "Traffic jam", category: "交通與問路", example: "而家塞車。", example_jyutping: "ji4 gaa1 sak1 ce1.", tip: "交通狀況" },
+            { word: "快啲", jyutping: "faai3 di1", mandarin: "快一點", english: "Faster", category: "交通與問路", example: "快啲啦！", example_jyutping: "faai3 di1 laa1!", tip: "催促" },
+            { word: "慢啲", jyutping: "maan6 di1", mandarin: "慢一點", english: "Slower", category: "交通與問路", example: "慢啲。", example_jyutping: "maan6 di1.", tip: "放慢" },
+            { word: "轉", jyutping: "zyun3", mandarin: "轉", english: "Transfer / Change", category: "交通與問路", example: "轉幾號線？", example_jyutping: "zyun3 gei2 hou6 sin3?", tip: "轉乘" },
+            { word: "幾號線", jyutping: "gei2 hou6 sin3", mandarin: "幾號線", english: "Which line", category: "交通與問路", example: "轉幾號線？", example_jyutping: "zyun3 gei2 hou6 sin3?", tip: "地鐵線" },
+
+            // 日常用語與疑問 (35)
+            { word: "呢個", jyutping: "ni1 go3", mandarin: "這個", english: "This one", category: "日常用語與疑問", example: "呢個幾錢？", example_jyutping: "ni1 go3 gei2 cin2?", tip: "指示代詞" },
+            { word: "嗰個", jyutping: "go2 go3", mandarin: "那個", english: "That one", category: "日常用語與疑問", example: "嗰個唔係我嘅。", example_jyutping: "go2 go3 m4 hai6 ngo5 ge3.", tip: "指示代詞" },
+            { word: "邊個", jyutping: "bin1 go3", mandarin: "哪個", english: "Which one", category: "日常用語與疑問", example: "邊個係你？", example_jyutping: "bin1 go3 hai6 nei5?", tip: "選擇疑問" },
+            { word: "點解", jyutping: "dim2 gaai2", mandarin: "為什麼", english: "Why", category: "日常用語與疑問", example: "點解咁貴？", example_jyutping: "dim2 gaai2 gam3 gwai3?", tip: "常用疑問詞" },
+            { word: "點樣", jyutping: "dim2 joeng2", mandarin: "怎麼樣", english: "How", category: "日常用語與疑問", example: "點樣做？", example_jyutping: "dim2 joeng2 zou6?", tip: "詢問方法" },
+            { word: "幾時", jyutping: "gei2 si4", mandarin: "什麼時候", english: "When", category: "日常用語與疑問", example: "幾時開學？", example_jyutping: "gei2 si4 hoi1 hok6?", tip: "問時間" },
+            { word: "而家", jyutping: "ji4 gaa1", mandarin: "現在", english: "Now", category: "日常用語與疑問", example: "而家幾點？", example_jyutping: "ji4 gaa1 gei2 dim2?", tip: "現在" },
+            { word: "聽日", jyutping: "ting1 jat6", mandarin: "明天", english: "Tomorrow", category: "日常用語與疑問", example: "聽日見。", example_jyutping: "ting1 jat6 gin3.", tip: "明天" },
+            { word: "琴日", jyutping: "kam4 jat6", mandarin: "昨天", english: "Yesterday", category: "日常用語與疑問", example: "琴日我去咗。", example_jyutping: "kam4 jat6 ngo5 heoi3 zo2.", tip: "昨天" },
+            { word: "今日", jyutping: "gam1 jat6", mandarin: "今天", english: "Today", category: "日常用語與疑問", example: "今日天氣好好。", example_jyutping: "gam1 jat6 tin1 hei3 hou2 hou2.", tip: "今天" },
+            { word: "明白", jyutping: "ming4 baak6", mandarin: "明白", english: "Understand", category: "日常用語與疑問", example: "我明白晒。", example_jyutping: "ngo5 ming4 baak6 saai3.", tip: "確認理解" },
+            { word: "唔明白", jyutping: "m4 ming4 baak6", mandarin: "不明白", english: "Don't understand", category: "日常用語與疑問", example: "我唔明白。", example_jyutping: "ngo5 m4 ming4 baak6.", tip: "不理解" },
+            { word: "慢啲", jyutping: "maan6 di1", mandarin: "慢一點", english: "Slower please", category: "日常用語與疑問", example: "慢啲講得唔該。", example_jyutping: "maan6 di1 gong2 dak1 m4 goi1.", tip: "請求放慢" },
+            { word: "快啲", jyutping: "faai3 di1", mandarin: "快一點", english: "Faster please", category: "日常用語與疑問", example: "快啲啦！", example_jyutping: "faai3 di1 laa1!", tip: "催促" },
+            { word: "得唔得", jyutping: "dak1 m4 dak1", mandarin: "可不可以", english: "Can it be done?", category: "日常用語與疑問", example: "得唔得？", example_jyutping: "dak1 m4 dak1?", tip: "請求確認" },
+            { word: "可以", jyutping: "ho2 ji5", mandarin: "可以", english: "Can", category: "日常用語與疑問", example: "可以。", example_jyutping: "ho2 ji5.", tip: "同意" },
+            { word: "唔可以", jyutping: "m4 ho2 ji5", mandarin: "不可以", english: "Cannot", category: "日常用語與疑問", example: "唔可以。", example_jyutping: "m4 ho2 ji5.", tip: "拒絕" },
+            { word: "冇得", jyutping: "mou5 dak1", mandarin: "沒有辦法", english: "No way / Cannot", category: "日常用語與疑問", example: "冇得改。", example_jyutping: "mou5 dak1 goi2.", tip: "無法改變" },
+            { word: "試下", jyutping: "si3 haa5", mandarin: "試試", english: "Try", category: "日常用語與疑問", example: "試下啦。", example_jyutping: "si3 haa5 laa1.", tip: "鼓勵嘗試" },
+            { word: "得", jyutping: "dak1", mandarin: "可以 / 行", english: "Okay / Fine", category: "日常用語與疑問", example: "得！", example_jyutping: "dak1!", tip: "同意" },
+            { word: "唔得", jyutping: "m4 dak1", mandarin: "不行", english: "Not okay", category: "日常用語與疑問", example: "唔得。", example_jyutping: "m4 dak1.", tip: "拒絕" },
+            { word: "好呀", jyutping: "hou2 aa3", mandarin: "好啊", english: "Okay / Sounds good", category: "日常用語與疑問", example: "好呀！", example_jyutping: "hou2 aa3!", tip: "同意" },
+            { word: "唔好", jyutping: "m4 hou2", mandarin: "不好", english: "Not good", category: "日常用語與疑問", example: "唔好呀。", example_jyutping: "m4 hou2 aa3.", tip: "不同意" },
+            { word: "幾好", jyutping: "gei2 hou2", mandarin: "挺好", english: "Pretty good", category: "日常用語與疑問", example: "幾好呀！", example_jyutping: "gei2 hou2 aa3!", tip: "不錯" },
+            { word: "好好", jyutping: "hou2 hou2", mandarin: "很好", english: "Very good", category: "日常用語與疑問", example: "好好！", example_jyutping: "hou2 hou2!", tip: "讚美" },
+            { word: "唔錯", jyutping: "m4 co3", mandarin: "不錯", english: "Not bad", category: "日常用語與疑問", example: "唔錯呀。", example_jyutping: "m4 co3 aa3.", tip: "正面評價" },
+            { word: "麻煩", jyutping: "maa4 faan4", mandarin: "麻煩", english: "Troublesome", category: "日常用語與疑問", example: "好麻煩。", example_jyutping: "hou2 maa4 faan4.", tip: "覺得麻煩" },
+            { word: "簡單", jyutping: "gaan2 daan1", mandarin: "簡單", english: "Simple", category: "日常用語與疑問", example: "好簡單。", example_jyutping: "hou2 gaan2 daan1.", tip: "容易" },
+            { word: "難", jyutping: "naan4", mandarin: "難", english: "Difficult", category: "日常用語與疑問", example: "好難。", example_jyutping: "hou2 naan4.", tip: "困難" },
+            { word: "幾點", jyutping: "gei2 dim2", mandarin: "幾點", english: "What time", category: "日常用語與疑問", example: "而家幾點？", example_jyutping: "ji4 gaa1 gei2 dim2?", tip: "問時間" },
+            { word: "朝早", jyutping: "ziu1 zou2", mandarin: "早上", english: "Morning", category: "日常用語與疑問", example: "朝早幾點？", example_jyutping: "ziu1 zou2 gei2 dim2?", tip: "早上" },
+            { word: "夜晚", jyutping: "je6 maan5", mandarin: "晚上", english: "Evening / Night", category: "日常用語與疑問", example: "夜晚見。", example_jyutping: "je6 maan5 gin3.", tip: "晚上" },
+            { word: "中午", jyutping: "zung1 ng5", mandarin: "中午", english: "Noon", category: "日常用語與疑問", example: "中午食飯。", example_jyutping: "zung1 ng5 sik6 faan6.", tip: "中午" },
+            { word: "等陣", jyutping: "dang2 zan6", mandarin: "等一下", english: "Wait a moment", category: "日常用語與疑問", example: "等陣先。", example_jyutping: "dang2 zan6 sin1.", tip: "請稍等" },
+
+            // 情感與描述 (25)
+            { word: "開心", jyutping: "hoi1 sam1", mandarin: "開心", english: "Happy", category: "情感與描述", example: "我好開心。", example_jyutping: "ngo5 hou2 hoi1 sam1.", tip: "正面情緒" },
+            { word: "唔開心", jyutping: "m4 hoi1 sam1", mandarin: "不開心", english: "Unhappy", category: "情感與描述", example: "我唔開心。", example_jyutping: "ngo5 m4 hoi1 sam1.", tip: "負面情緒" },
+            { word: "嬲", jyutping: "nau1", mandarin: "生氣", english: "Angry", category: "情感與描述", example: "佢好嬲。", example_jyutping: "keoi5 hou2 nau1.", tip: "生氣" },
+            { word: "驚", jyutping: "geng1", mandarin: "害怕", english: "Scared", category: "情感與描述", example: "我好驚。", example_jyutping: "ngo5 hou2 geng1.", tip: "害怕" },
+            { word: "擔心", jyutping: "daam1 sam1", mandarin: "擔心", english: "Worry", category: "情感與描述", example: "唔使擔心。", example_jyutping: "m4 sai2 daam1 sam1.", tip: "安慰" },
+            { word: "舒服", jyutping: "syu1 fuk6", mandarin: "舒服", english: "Comfortable", category: "情感與描述", example: "好舒服。", example_jyutping: "hou2 syu1 fuk6.", tip: "舒服感覺" },
+            { word: "唔舒服", jyutping: "m4 syu1 fuk6", mandarin: "不舒服", english: "Uncomfortable", category: "情感與描述", example: "我唔舒服。", example_jyutping: "ngo5 m4 syu1 fuk6.", tip: "身體不適" },
+            { word: "凍", jyutping: "dung3", mandarin: "冷", english: "Cold", category: "情感與描述", example: "好凍呀。", example_jyutping: "hou2 dung3 aa3.", tip: "天氣或感覺" },
+            { word: "熱", jyutping: "jit6", mandarin: "熱", english: "Hot", category: "情感與描述", example: "好熱。", example_jyutping: "hou2 jit6.", tip: "天氣或感覺" },
+            { word: "肚餓", jyutping: "tou5 ngo6", mandarin: "肚子餓", english: "Hungry", category: "情感與描述", example: "我肚餓。", example_jyutping: "ngo5 tou5 ngo6.", tip: "飢餓" },
+            { word: "飽", jyutping: "baau2", mandarin: "飽", english: "Full", category: "情感與描述", example: "我飽晒。", example_jyutping: "ngo5 baau2 saai3.", tip: "吃飽" },
+            { word: "口渴", jyutping: "hau2 hot3", mandarin: "口渴", english: "Thirsty", category: "情感與描述", example: "我口渴。", example_jyutping: "ngo5 hau2 hot3.", tip: "口渴" },
+            { word: "瞓覺", jyutping: "fan3 gaau3", mandarin: "睡覺", english: "Sleep", category: "情感與描述", example: "我要瞓覺。", example_jyutping: "ngo5 jiu3 fan3 gaau3.", tip: "休息" },
+            { word: "瞓唔著", jyutping: "fan3 m4 zoek6", mandarin: "睡不著", english: "Cannot sleep", category: "情感與描述", example: "我瞓唔著。", example_jyutping: "ngo5 fan3 m4 zoek6.", tip: "失眠" },
+            { word: "精神", jyutping: "zing1 san4", mandarin: "精神", english: "Energetic", category: "情感與描述", example: "好精神。", example_jyutping: "hou2 zing1 san4.", tip: "有精神" },
+            { word: "攰", jyutping: "gui6", mandarin: "累", english: "Tired", category: "情感與描述", example: "我好攰。", example_jyutping: "ngo5 hou2 gui6.", tip: "疲倦" },
+            { word: "忙", jyutping: "mong4", mandarin: "忙", english: "Busy", category: "情感與描述", example: "我好忙。", example_jyutping: "ngo5 hou2 mong4.", tip: "忙碌" },
+            { word: "閒", jyutping: "haan4", mandarin: "閒", english: "Free / Leisurely", category: "情感與描述", example: "而家好閒。", example_jyutping: "ji4 gaa1 hou2 haan4.", tip: "有空" },
+            { word: "傷心", jyutping: "soeng1 sam1", mandarin: "傷心", english: "Sad", category: "情感與描述", example: "我好傷心。", example_jyutping: "ngo5 hou2 soeng1 sam1.", tip: "難過" },
+            { word: "開心晒", jyutping: "hoi1 sam1 saai3", mandarin: "非常開心", english: "Very happy", category: "情感與描述", example: "我開心晒！", example_jyutping: "ngo5 hoi1 sam1 saai3!", tip: "極度開心" },
+            { word: "好嬲", jyutping: "hou2 nau1", mandarin: "很生氣", english: "Very angry", category: "情感與描述", example: "我好嬲！", example_jyutping: "ngo5 hou2 nau1!", tip: "很生氣" },
+            { word: "好驚", jyutping: "hou2 geng1", mandarin: "很害怕", english: "Very scared", category: "情感與描述", example: "我好驚。", example_jyutping: "ngo5 hou2 geng1.", tip: "很害怕" },
+            { word: "好攰", jyutping: "hou2 gui6", mandarin: "很累", english: "Very tired", category: "情感與描述", example: "我好攰。", example_jyutping: "ngo5 hou2 gui6.", tip: "很累" },
+            { word: "好忙", jyutping: "hou2 mong4", mandarin: "很忙", english: "Very busy", category: "情感與描述", example: "我好忙。", example_jyutping: "ngo5 hou2 mong4.", tip: "很忙" },
+            { word: "好舒服", jyutping: "hou2 syu1 fuk6", mandarin: "很舒服", english: "Very comfortable", category: "情感與描述", example: "好舒服。", example_jyutping: "hou2 syu1 fuk6.", tip: "很舒服" },
+
+            // 教學相關 (20)
+            { word: "教", jyutping: "gaau3", mandarin: "教", english: "Teach", category: "教學相關", example: "教我廣東話。", example_jyutping: "gaau3 ngo5 gwong2 dung1 waa2.", tip: "教學動作" },
+            { word: "學", jyutping: "hok6", mandarin: "學", english: "Learn", category: "教學相關", example: "我想學。", example_jyutping: "ngo5 soeng2 hok6.", tip: "學習動作" },
+            { word: "發音", jyutping: "faat3 jam1", mandarin: "發音", english: "Pronunciation", category: "教學相關", example: "呢個發音點樣？", example_jyutping: "ni1 go3 faat3 jam1 dim2 joeng2?", tip: "發音練習" },
+            { word: "粵拼", jyutping: "jyut6 ping3", mandarin: "粵拼", english: "Jyutping", category: "教學相關", example: "用粵拼寫。", example_jyutping: "jung6 jyut6 ping3 se2.", tip: "Jyutping 系統" },
+            { word: "聲調", jyutping: "sing1 diu6", mandarin: "聲調", english: "Tone", category: "教學相關", example: "注意聲調。", example_jyutping: "zyu3 ji3 sing1 diu6.", tip: "廣東話聲調" },
+            { word: "例句", jyutping: "lai6 geoi3", mandarin: "例句", english: "Example sentence", category: "教學相關", example: "畀個例句我。", example_jyutping: "bei2 go3 lai6 geoi3 ngo5.", tip: "舉例" },
+            { word: "練習", jyutping: "lin6 zaap6", mandarin: "練習", english: "Practice", category: "教學相關", example: "多啲練習。", example_jyutping: "do1 di1 lin6 zaap6.", tip: "練習重要" },
+            { word: "明白未", jyutping: "ming4 baak6 mei6", mandarin: "明白嗎？", english: "Do you understand?", category: "教學相關", example: "明白未？", example_jyutping: "ming4 baak6 mei6?", tip: "確認理解" },
+            { word: "重複", jyutping: "cung4 fuk6", mandarin: "重複", english: "Repeat", category: "教學相關", example: "請重複一次。", example_jyutping: "cing2 cung4 fuk6 jat1 ci3.", tip: "重複練習" },
+            { word: "慢啲講", jyutping: "maan6 di1 gong2", mandarin: "慢一點說", english: "Speak slower", category: "教學相關", example: "慢啲講得唔該。", example_jyutping: "maan6 di1 gong2 dak1 m4 goi1.", tip: "請求慢講" },
+            { word: "點寫", jyutping: "dim2 se2", mandarin: "怎麼寫", english: "How to write", category: "教學相關", example: "呢個點寫？", example_jyutping: "ni1 go3 dim2 se2?", tip: "問寫法" },
+            { word: "點讀", jyutping: "dim2 duk6", mandarin: "怎麼讀", english: "How to pronounce", category: "教學相關", example: "呢個點讀？", example_jyutping: "ni1 go3 dim2 duk6?", tip: "問讀音" },
+            { word: "教我", jyutping: "gaau3 ngo5", mandarin: "教我", english: "Teach me", category: "教學相關", example: "教我呢句。", example_jyutping: "gaau3 ngo5 ni1 geoi3.", tip: "請求教學" },
+            { word: "我試下", jyutping: "ngo5 si3 haa5", mandarin: "我試試", english: "Let me try", category: "教學相關", example: "我試下。", example_jyutping: "ngo5 si3 haa5.", tip: "學生嘗試" },
+            { word: "好正", jyutping: "hou2 zeng3", mandarin: "很好", english: "Very good", category: "教學相關", example: "好正！", example_jyutping: "hou2 zeng3!", tip: "讚美學生" },
+            { word: "再試一次", jyutping: "zoi3 si3 jat1 ci3", mandarin: "再試一次", english: "Try again", category: "教學相關", example: "再試一次。", example_jyutping: "zoi3 si3 jat1 ci3.", tip: "鼓勵" },
+            { word: "做得好", jyutping: "zou6 dak1 hou2", mandarin: "做得好", english: "Well done", category: "教學相關", example: "做得好！", example_jyutping: "zou6 dak1 hou2!", tip: "讚美" },
+            { word: "幾好呀", jyutping: "gei2 hou2 aa3", mandarin: "挺好啊", english: "Pretty good", category: "教學相關", example: "幾好呀！", example_jyutping: "gei2 hou2 aa3!", tip: "正面反饋" },
+            { word: "繼續", jyutping: "gai3 zuk6", mandarin: "繼續", english: "Continue", category: "教學相關", example: "繼續練。", example_jyutping: "gai3 zuk6 lin6.", tip: "繼續" },
+            { word: "好努力", jyutping: "hou2 nou5 lik6", mandarin: "很努力", english: "Very hardworking", category: "教學相關", example: "你好努力。", example_jyutping: "nei5 hou2 nou5 lik6.", tip: "鼓勵" },
+
+            // 地區 (18區 + 景點)
+            { word: "中西區", jyutping: "zung1 sai1 keoi1", mandarin: "中西區", english: "Central and Western District", category: "地區", example: "我住中西區。", example_jyutping: "ngo5 zyu6 zung1 sai1 keoi1.", tip: "香港18區之一" },
+            { word: "東區", jyutping: "dung1 keoi1", mandarin: "東區", english: "Eastern District", category: "地區", example: "去東區。", example_jyutping: "heoi3 dung1 keoi1.", tip: "香港18區之一" },
+            { word: "南區", jyutping: "naam4 keoi1", mandarin: "南區", english: "Southern District", category: "地區", example: "南區有好多景點。", example_jyutping: "naam4 keoi1 jau5 hou2 do1 ging2 dim2.", tip: "香港18區之一" },
+            { word: "灣仔區", jyutping: "waan1 zai2 keoi1", mandarin: "灣仔區", english: "Wan Chai District", category: "地區", example: "灣仔區好熱鬧。", example_jyutping: "waan1 zai2 keoi1 hou2 jit6 naau6.", tip: "香港18區之一" },
+            { word: "九龍城區", jyutping: "gau2 lung4 sing4 keoi1", mandarin: "九龍城區", english: "Kowloon City District", category: "地區", example: "九龍城區有廟街。", example_jyutping: "gau2 lung4 sing4 keoi1 jau5 miu6 gaai1.", tip: "香港18區之一" },
+            { word: "觀塘區", jyutping: "gun1 tong4 keoi1", mandarin: "觀塘區", english: "Kwun Tong District", category: "地區", example: "觀塘區好多工廈。", example_jyutping: "gun1 tong4 keoi1 hou2 do1 gung1 haa5.", tip: "香港18區之一" },
+            { word: "深水埗區", jyutping: "sam1 seoi2 bou3 keoi1", mandarin: "深水埗區", english: "Sham Shui Po District", category: "地區", example: "深水埗區有好多平價貨。", example_jyutping: "sam1 seoi2 bou3 keoi1 jau5 hou2 do1 peng4 gaa3 fo3.", tip: "香港18區之一" },
+            { word: "黃大仙區", jyutping: "wong4 daai6 sin1 keoi1", mandarin: "黃大仙區", english: "Wong Tai Sin District", category: "地區", example: "黃大仙區有黃大仙祠。", example_jyutping: "wong4 daai6 sin1 keoi1 jau5 wong4 daai6 sin1 ci4.", tip: "香港18區之一" },
+            { word: "油尖旺區", jyutping: "jau4 zim1 wong6 keoi1", mandarin: "油尖旺區", english: "Yau Tsim Mong District", category: "地區", example: "油尖旺區好多人流。", example_jyutping: "jau4 zim1 wong6 keoi1 hou2 do1 jan4 lau4.", tip: "香港18區之一" },
+            { word: "離島區", jyutping: "lei4 dou2 keoi1", mandarin: "離島區", english: "Islands District", category: "地區", example: "離島區有大嶼山。", example_jyutping: "lei4 dou2 keoi1 jau5 daai6 jyu4 saan1.", tip: "香港18區之一" },
+            { word: "葵青區", jyutping: "kwai1 cing1 keoi1", mandarin: "葵青區", english: "Kwai Tsing District", category: "地區", example: "葵青區有青衣。", example_jyutping: "kwai1 cing1 keoi1 jau5 ceng1 ji1.", tip: "香港18區之一" },
+            { word: "北區", jyutping: "bak1 keoi1", mandarin: "北區", english: "North District", category: "地區", example: "北區有粉嶺。", example_jyutping: "bak1 keoi1 jau5 fan2 ling4.", tip: "香港18區之一" },
+            { word: "西貢區", jyutping: "sai1 gung3 keoi1", mandarin: "西貢區", english: "Sai Kung District", category: "地區", example: "西貢區好靚。", example_jyutping: "sai1 gung3 keoi1 hou2 leng3.", tip: "香港18區之一" },
+            { word: "沙田區", jyutping: "saa1 tin4 keoi1", mandarin: "沙田區", english: "Sha Tin District", category: "地區", example: "沙田區有新城市廣場。", example_jyutping: "saa1 tin4 keoi1 jau5 san1 sing4 si5 gwong2 coeng4.", tip: "香港18區之一" },
+            { word: "大埔區", jyutping: "daai6 bou3 keoi1", mandarin: "大埔區", english: "Tai Po District", category: "地區", example: "大埔區有大埔超級城。", example_jyutping: "daai6 bou3 keoi1 jau5 daai6 bou3 ciu1 kap1 sing4.", tip: "香港18區之一" },
+            { word: "荃灣區", jyutping: "cyun4 waan1 keoi1", mandarin: "荃灣區", english: "Tsuen Wan District", category: "地區", example: "荃灣區有荃新天地。", example_jyutping: "cyun4 waan1 keoi1 jau5 cyun4 san1 tin1 dei6.", tip: "香港18區之一" },
+            { word: "屯門區", jyutping: "tyun4 mun4 keoi1", mandarin: "屯門區", english: "Tuen Mun District", category: "地區", example: "屯門區有屯門市中心。", example_jyutping: "tyun4 mun4 keoi1 jau5 tyun4 mun4 si5 zung1 sam1.", tip: "香港18區之一" },
+            { word: "元朗區", jyutping: "jyun4 long5 keoi1", mandarin: "元朗區", english: "Yuen Long District", category: "地區", example: "元朗區有元朗大馬路。", example_jyutping: "jyun4 long5 keoi1 jau5 jyun4 long5 daai6 maa5 lou6.", tip: "香港18區之一" },
+
+            // 天氣 (10)
+            { word: "天氣", jyutping: "tin1 hei3", mandarin: "天氣", english: "Weather", category: "天氣", example: "今日天氣好好，適合出門。", example_jyutping: "gam1 jat6 tin1 hei3 hou2 hou2, sik1 hap6 ceot1 mun4.", tip: "天氣" },
+            { word: "落雨", jyutping: "lok6 jyu5", mandarin: "下雨", english: "Raining", category: "天氣", example: "而家落雨，好大雨呀。", example_jyutping: "ji4 gaa1 lok6 jyu5, hou2 daai6 jyu5 aa3.", tip: "下雨" },
+            { word: "出太陽", jyutping: "ceot1 taai3 joeng4", mandarin: "出太陽", english: "Sunny", category: "天氣", example: "今日出太陽，好熱呀。", example_jyutping: "gam1 jat6 ceot1 taai3 joeng4, hou2 jit6 aa3.", tip: "晴天" },
+            { word: "陰天", jyutping: "jam1 tin1", mandarin: "陰天", english: "Overcast", category: "天氣", example: "今日陰天，冇太陽。", example_jyutping: "gam1 jat6 jam1 tin1, mou5 taai3 joeng4.", tip: "陰天" },
+            { word: "落雪", jyutping: "lok6 syut3", mandarin: "下雪", english: "Snowing", category: "天氣", example: "香港好少落雪。", example_jyutping: "hoeng1 gong2 hou2 siu2 lok6 syut3.", tip: "下雪" },
+            { word: "打雷", jyutping: "daa2 leoi4", mandarin: "打雷", english: "Thunder", category: "天氣", example: "打雷好大聲，好驚。", example_jyutping: "daa2 leoi4 hou2 daai6 seng1, hou2 geng1.", tip: "打雷" },
+            { word: "閃電", jyutping: "sim2 din6", mandarin: "閃電", english: "Lightning", category: "天氣", example: "有閃電，唔好企喺樹下面。", example_jyutping: "jau5 sim2 din6, m4 hou2 kei5 hai2 syu6 haa6 min6.", tip: "閃電" },
+            { word: "大風", jyutping: "daai6 fung1", mandarin: "大風", english: "Strong wind", category: "天氣", example: "而家大風，唔好出門。", example_jyutping: "ji4 gaa1 daai6 fung1, m4 hou2 ceot1 mun4.", tip: "大風" },
+            { word: "好熱", jyutping: "hou2 jit6", mandarin: "很熱", english: "Very hot", category: "天氣", example: "今日好熱，食雪糕啦。", example_jyutping: "gam1 jat6 hou2 jit6, sik6 syut3 gou1 laa1.", tip: "熱天" },
+            { word: "好凍", jyutping: "hou2 dung3", mandarin: "很冷", english: "Very cold", category: "天氣", example: "今日好凍，要著多啲衫。", example_jyutping: "gam1 jat6 hou2 dung3, jiu3 zoek3 do1 di1 saam1.", tip: "冷天" }
+        ];
+
+        // 香港18區著名景點數據
+        const districtAttractions = {
+            "中西區": [
+                { word: "太平山頂", jyutping: "taai3 ping4 saan1 deng2", mandarin: "太平山頂", english: "The Peak", example: "去太平山頂睇夜景。", example_jyutping: "heoi3 taai3 ping4 saan1 deng2 tai2 je6 ging2." },
+                { word: "香港大學", jyutping: "hoeng1 gong2 daai6 hok6", mandarin: "香港大學", english: "The University of Hong Kong", example: "香港大學好出名。", example_jyutping: "hoeng1 gong2 daai6 hok6 hou2 ceot1 meng2." },
+                { word: "中環", jyutping: "zung1 waan4", mandarin: "中環", english: "Central", example: "中環好多銀行。", example_jyutping: "zung1 waan4 hou2 do1 ngan4 hong4." },
+                { word: "蘭桂坊", jyutping: "laan4 gwai3 fong1", mandarin: "蘭桂坊", english: "Lan Kwai Fong", example: "蘭桂坊好多人飲酒。", example_jyutping: "laan4 gwai3 fong1 hou2 do1 jan4 jam2 zau2." },
+                { word: "海味街", jyutping: "hoi2 mei6 gaai1", mandarin: "海味街", english: "Dried Seafood Street", example: "上環海味街好出名。", example_jyutping: "soeng6 waan4 hoi2 mei6 gaai1 hou2 ceot1 meng2." },
+                { word: "香港公園", jyutping: "hoeng1 gong2 gung1 jyun2", mandarin: "香港公園", english: "Hong Kong Park", example: "香港公園好靚。", example_jyutping: "hoeng1 gong2 gung1 jyun2 hou2 leng3." }
+            ],
+            "東區": [
+                { word: "鰂魚涌", jyutping: "zak1 jyu4 cung1", mandarin: "鰂魚涌", english: "Quarry Bay", example: "鰂魚涌有太古城。", example_jyutping: "zak1 jyu4 cung1 jau5 taai3 gu2 sing4." },
+                { word: "太古城", jyutping: "taai3 gu2 sing4", mandarin: "太古城", english: "Taikoo Shing", example: "太古城好大。", example_jyutping: "taai3 gu2 sing4 hou2 daai6." },
+                { word: "筲箕灣", jyutping: "saau1 gei1 waan1", mandarin: "筲箕灣", english: "Shau Kei Wan", example: "筲箕灣有海傍。", example_jyutping: "saau1 gei1 waan1 jau5 hoi2 bong6." },
+                { word: "香港電影資料館", jyutping: "hoeng1 gong2 din6 jing2 zi1 liu6 gun2", mandarin: "香港電影資料館", english: "Hong Kong Film Archive", example: "香港電影資料館好出名。", example_jyutping: "hoeng1 gong2 din6 jing2 zi1 liu6 gun2 hou2 ceot1 meng2." },
+                { word: "香港抗戰及海防博物館", jyutping: "hoeng1 gong2 kong3 zin3 kap6 hoi2 fong4 bok3 mat6 gun2", mandarin: "香港抗戰及海防博物館", english: "Hong Kong Museum of the War of Resistance and Coastal Defence", example: "去抗戰及海防博物館。", example_jyutping: "heoi3 kong3 zin3 kap6 hoi2 fong4 bok3 mat6 gun2." }
+            ],
+            "南區": [
+                { word: "淺水灣", jyutping: "cin2 seoi2 waan1", mandarin: "淺水灣", english: "Repulse Bay", example: "淺水灣好靚。", example_jyutping: "cin2 seoi2 waan1 hou2 leng3." },
+                { word: "赤柱", jyutping: "cek3 cyu5", mandarin: "赤柱", english: "Stanley", example: "赤柱有市集。", example_jyutping: "cek3 cyu5 jau5 si5 zaap6." },
+                { word: "香港海洋公園", jyutping: "hoeng1 gong2 hoi2 joeng4 gung1 jyun2", mandarin: "香港海洋公園", english: "Ocean Park", example: "去海洋公園玩。", example_jyutping: "heoi3 hoi2 joeng4 gung1 jyun2 waan2." },
+                { word: "數碼港", jyutping: "sou3 maa5 gong2", mandarin: "數碼港", english: "Cyberport", example: "數碼港有好多科技公司。", example_jyutping: "sou3 maa5 gong2 jau5 hou2 do1 fo1 gei6 gung1 si1." }
+            ],
+            "灣仔區": [
+                { word: "灣仔", jyutping: "waan1 zai2", mandarin: "灣仔", english: "Wan Chai", example: "灣仔好熱鬧。", example_jyutping: "waan1 zai2 hou2 jit6 naau6." },
+                { word: "香港會議展覽中心", jyutping: "hoeng1 gong2 wui6 ji5 zin2 laam5 zung1 sam1", mandarin: "香港會議展覽中心", english: "HKCEC", example: "去會展中心。", example_jyutping: "heoi3 wui6 zi2 zung1 sam1." },
+                { word: "香港演藝學院", jyutping: "hoeng1 gong2 jin2 ngai6 hok6 jyun2", mandarin: "香港演藝學院", english: "Hong Kong Academy for Performing Arts", example: "香港演藝學院好出名。", example_jyutping: "hoeng1 gong2 jin2 ngai6 hok6 jyun2 hou2 ceot1 meng2." },
+                { word: "跑馬地馬場", jyutping: "paau2 maa5 dei6 maa5 coeng4", mandarin: "跑馬地馬場", english: "Happy Valley Racecourse", example: "跑馬地馬場有賽馬。", example_jyutping: "paau2 maa5 dei6 maa5 coeng4 jau5 coi3 maa5." },
+                { word: "鵝頸橋", jyutping: "ngo4 geng2 kiu4", mandarin: "鵝頸橋", english: "Canal Road / Goose Neck Bridge", example: "鵝頸橋附近好多人。", example_jyutping: "ngo4 geng2 kiu4 fu6 gan6 hou2 do1 jan4." }
+            ],
+            "九龍城區": [
+                { word: "廟街", jyutping: "miu6 gaai1", mandarin: "廟街", english: "Temple Street", example: "廟街有夜市。", example_jyutping: "miu6 gaai1 jau5 je6 si5." },
+                { word: "九龍城", jyutping: "gau2 lung4 sing4", mandarin: "九龍城", english: "Kowloon City", example: "九龍城有泰國菜。", example_jyutping: "gau2 lung4 sing4 jau5 taai3 gwok3 coi3." },
+                { word: "啟德", jyutping: "kai2 dak1", mandarin: "啟德", english: "Kai Tak", example: "啟德有新發展。", example_jyutping: "kai2 dak1 jau5 san1 faat3 zin2." },
+                { word: "宋王臺花園", jyutping: "sung3 wong4 toi4 faa1 jyun2", mandarin: "宋王臺花園", english: "Sung Wong Toi Garden", example: "宋王臺花園有歷史。", example_jyutping: "sung3 wong4 toi4 faa1 jyun2 jau5 lik6 si2." }
+            ],
+            "觀塘區": [
+                { word: "觀塘", jyutping: "gun1 tong4", mandarin: "觀塘", english: "Kwun Tong", example: "觀塘好多工廈。", example_jyutping: "gun1 tong4 hou2 do1 gung1 haa5." },
+                { word: "牛頭角", jyutping: "ngau4 tau4 gok3", mandarin: "牛頭角", english: "Ngau Tau Kok", example: "牛頭角有apm。", example_jyutping: "ngau4 tau4 gok3 jau5 apm." }
+            ],
+            "深水埗區": [
+                { word: "深水埗", jyutping: "sam1 seoi2 bou3", mandarin: "深水埗", english: "Sham Shui Po", example: "深水埗有好多平價貨。", example_jyutping: "sam1 seoi2 bou3 jau5 hou2 do1 peng4 gaa3 fo3." },
+                { word: "長沙灣", jyutping: "coeng4 saa1 waan1", mandarin: "長沙灣", english: "Cheung Sha Wan", example: "長沙灣有西九龍中心。", example_jyutping: "coeng4 saa1 waan1 jau5 sai1 gau2 lung4 zung1 sam1." },
+                { word: "西九龍中心", jyutping: "sai1 gau2 lung4 zung1 sam1", mandarin: "西九龍中心", english: "West Kowloon Centre", example: "西九龍中心有好多店。", example_jyutping: "sai1 gau2 lung4 zung1 sam1 jau5 hou2 do1 dim3." },
+                { word: "深水埗電腦商場", jyutping: "sam1 seoi2 bou3 din6 nou5 soeng1 coeng4", mandarin: "深水埗電腦商場", english: "Sham Shui Po Computer Centre", example: "深水埗電腦商場好多電腦。", example_jyutping: "sam1 seoi2 bou3 din6 nou5 soeng1 coeng4 hou2 do1 din6 nou5." },
+                { word: "李鄭屋漢墓博物館", jyutping: "lei5 zeng6 uk1 hon3 mou6 bok3 mat6 gun2", mandarin: "李鄭屋漢墓博物館", english: "Lei Cheng Uk Han Tomb Museum", example: "李鄭屋漢墓博物館有歷史。", example_jyutping: "lei5 zeng6 uk1 hon3 mou6 bok3 mat6 gun2 jau5 lik6 si2." }
+            ],
+            "黃大仙區": [
+                { word: "黃大仙祠", jyutping: "wong4 daai6 sin1 ci4", mandarin: "黃大仙祠", english: "Wong Tai Sin Temple", example: "去黃大仙祠拜神。", example_jyutping: "heoi3 wong4 daai6 sin1 ci4 baai3 san4." },
+                { word: "黃大仙", jyutping: "wong4 daai6 sin1", mandarin: "黃大仙", english: "Wong Tai Sin", example: "黃大仙區有好多廟。", example_jyutping: "wong4 daai6 sin1 keoi1 jau5 hou2 do1 miu6." },
+                { word: "荷里活廣場", jyutping: "ho4 lei5 wut6 gwong2 coeng4", mandarin: "荷里活廣場", english: "Hollywood Plaza", example: "荷里活廣場有好多店。", example_jyutping: "ho4 lei5 wut6 gwong2 coeng4 jau5 hou2 do1 dim3." }
+            ],
+            "油尖旺區": [
+                { word: "尖沙咀", jyutping: "zim1 saa1 zeoi2", mandarin: "尖沙咀", english: "Tsim Sha Tsui", example: "尖沙咀有星光大道。", example_jyutping: "zim1 saa1 zeoi2 jau5 sing1 gwong1 daai6 dou6." },
+                { word: "旺角", jyutping: "wong6 gok3", mandarin: "旺角", english: "Mong Kok", example: "旺角好多人。", example_jyutping: "wong6 gok3 hou2 do1 jan4." },
+                { word: "油麻地", jyutping: "jau4 maa4 dei6", mandarin: "油麻地", english: "Yau Ma Tei", example: "油麻地有廟街。", example_jyutping: "jau4 maa4 dei6 jau5 miu6 gaai1." },
+                { word: "佐敦", jyutping: "zo2 deon1", mandarin: "佐敦", english: "Jordan", example: "佐敦有好多餐廳。", example_jyutping: "zo2 deon1 jau5 hou2 do1 caan1 teng1." },
+                { word: "香港太空館", jyutping: "hoeng1 gong2 taai3 hung1 gun2", mandarin: "香港太空館", english: "Hong Kong Space Museum", example: "香港太空館好出名。", example_jyutping: "hoeng1 gong2 taai3 hung1 gun2 hou2 ceot1 meng2." },
+                { word: "香港歷史博物館", jyutping: "hoeng1 gong2 lik6 si2 bok3 mat6 gun2", mandarin: "香港歷史博物館", english: "Hong Kong Museum of History", example: "香港歷史博物館有好多展覽。", example_jyutping: "hoeng1 gong2 lik6 si2 bok3 mat6 gun2 jau5 hou2 do1 zin2 laam5." },
+                { word: "西九文化區", jyutping: "sai1 gau2 man4 faa3 keoi1", mandarin: "西九文化區", english: "West Kowloon Cultural District", example: "西九文化區好大。", example_jyutping: "sai1 gau2 man4 faa3 keoi1 hou2 daai6." },
+                { word: "舊油麻地警署", jyutping: "gau6 jau4 maa4 dei6 ging2 cyu5", mandarin: "舊油麻地警署", english: "Old Yau Ma Tei Police Station", example: "舊油麻地警署有歷史。", example_jyutping: "gau6 jau4 maa4 dei6 ging2 cyu5 jau5 lik6 si2." },
+                { word: "香港科學館", jyutping: "hoeng1 gong2 fo1 hok6 gun2", mandarin: "香港科學館", english: "Hong Kong Science Museum", example: "香港科學館好有趣。", example_jyutping: "hoeng1 gong2 fo1 hok6 gun2 hou2 jau5 ceoi3." },
+                { word: "九龍公園", jyutping: "gau2 lung4 gung1 jyun2", mandarin: "九龍公園", english: "Kowloon Park", example: "九龍公園好靚。", example_jyutping: "gau2 lung4 gung1 jyun2 hou2 leng3." },
+                { word: "香港文化中心", jyutping: "hoeng1 gong2 man4 faa3 zung1 sam1", mandarin: "香港文化中心", english: "Hong Kong Cultural Centre", example: "香港文化中心有表演。", example_jyutping: "hoeng1 gong2 man4 faa3 zung1 sam1 jau5 biu2 jin2." },
+                { word: "天星碼頭", jyutping: "tin1 sing1 maa5 tau4", mandarin: "天星碼頭", english: "Star Ferry Pier", example: "天星碼頭好出名。", example_jyutping: "tin1 sing1 maa5 tau4 hou2 ceot1 meng2." },
+                { word: "奧海城", jyutping: "ou3 hoi2 sing4", mandarin: "奧海城", english: "Olympian City", example: "奧海城有好多店。", example_jyutping: "ou3 hoi2 sing4 jau5 hou2 do1 dim3." },
+                { word: "圓方", jyutping: "jyun4 fong1", mandarin: "圓方", english: "Elements", example: "圓方好大。", example_jyutping: "jyun4 fong1 hou2 daai6." },
+                { word: "朗豪坊", jyutping: "long5 hou4 fong1", mandarin: "朗豪坊", english: "Langham Place", example: "朗豪坊有戲院。", example_jyutping: "long5 hou4 fong1 jau5 hei3 jyun2." },
+                { word: "女人街", jyutping: "neoi5 jan4 gaai1", mandarin: "女人街", english: "Ladies' Market", example: "女人街有好多平價貨。", example_jyutping: "neoi5 jan4 gaai1 jau5 hou2 do1 peng4 gaa3 fo3." },
+                { word: "旺角花墟", jyutping: "wong6 gok3 faa1 heoi1", mandarin: "旺角花墟", english: "Mong Kok Flower Market", example: "旺角花墟好靚。", example_jyutping: "wong6 gok3 faa1 heoi1 hou2 leng3." }
+            ],
+            "離島區": [
+                { word: "大嶼山", jyutping: "daai6 jyu4 saan1", mandarin: "大嶼山", english: "Lantau Island", example: "大嶼山有天壇大佛。", example_jyutping: "daai6 jyu4 saan1 jau5 tin1 taan4 daai6 fat6." },
+                { word: "香港國際機場", jyutping: "hoeng1 gong2 gwok3 zai3 gei1 coeng4", mandarin: "香港國際機場", english: "Hong Kong International Airport", example: "去機場。", example_jyutping: "heoi3 gei1 coeng4." },
+                { word: "昂坪", jyutping: "ngong4 ping4", mandarin: "昂坪", english: "Ngong Ping", example: "昂坪有天壇大佛。", example_jyutping: "ngong4 ping4 jau5 tin1 taan4 daai6 fat6." },
+                { word: "長洲", jyutping: "coeng4 zau1", mandarin: "長洲", english: "Cheung Chau", example: "長洲有太平清醮。", example_jyutping: "coeng4 zau1 jau5 taai3 ping4 cing1 ziu3." },
+                { word: "愉景灣", jyutping: "jyu4 ging2 waan1", mandarin: "愉景灣", english: "Discovery Bay", example: "愉景灣好靚。", example_jyutping: "jyu4 ging2 waan1 hou2 leng3." },
+                { word: "香港迪士尼樂園度假區", jyutping: "hoeng1 gong2 dik6 si6 nei4 lok6 jyun2 dou6 gaa3 keoi1", mandarin: "香港迪士尼樂園度假區", english: "Hong Kong Disneyland Resort", example: "去迪士尼玩。", example_jyutping: "heoi3 dik6 si6 nei4 lok6 jyun2 waan2." },
+                { word: "坪洲", jyutping: "ping4 zau1", mandarin: "坪洲", english: "Peng Chau", example: "坪洲好寧靜。", example_jyutping: "ping4 zau1 hou2 ning4 zing6." }
+            ],
+            "葵青區": [
+                { word: "青衣", jyutping: "ceng1 ji1", mandarin: "青衣", english: "Tsing Yi", example: "青衣有青衣城。", example_jyutping: "ceng1 ji1 jau5 ceng1 ji1 sing4." },
+                { word: "葵涌", jyutping: "kwai1 cung1", mandarin: "葵涌", english: "Kwai Chung", example: "葵涌有葵涌廣場。", example_jyutping: "kwai1 cung1 jau5 kwai1 cung1 gwong2 coeng4." },
+                { word: "貨櫃碼頭", jyutping: "fo3 gwai3 maa5 tau4", mandarin: "貨櫃碼頭", english: "Container Terminal", example: "葵青貨櫃碼頭好大。", example_jyutping: "kwai1 cing1 fo3 gwai3 maa5 tau4 hou2 daai6." },
+                { word: "青馬大橋", jyutping: "cing1 maa5 daai6 kiu4", mandarin: "青馬大橋", english: "Tsing Ma Bridge", example: "青馬大橋好出名。", example_jyutping: "cing1 maa5 daai6 kiu4 hou2 ceot1 meng2." }
+            ],
+            "北區": [
+                { word: "粉嶺", jyutping: "fan2 ling4", mandarin: "粉嶺", english: "Fanling", example: "粉嶺有粉嶺站。", example_jyutping: "fan2 ling4 jau5 fan2 ling4 zaam6." },
+                { word: "上水", jyutping: "soeng6 seoi2", mandarin: "上水", english: "Sheung Shui", example: "上水有上水廣場。", example_jyutping: "soeng6 seoi2 jau5 soeng6 seoi2 gwong2 coeng4." },
+                { word: "鄧公祠", jyutping: "tang4 gung1 ci4", mandarin: "鄧公祠", english: "Tang Ancestral Hall", example: "鄧公祠有歷史。", example_jyutping: "tang4 gung1 ci4 jau5 lik6 si2." },
+                { word: "鏡蓉書屋", jyutping: "geng3 jung4 syu1 uk1", mandarin: "鏡蓉書屋", english: "King Yung Study Hall", example: "鏡蓉書屋好出名。", example_jyutping: "geng3 jung4 syu1 uk1 hou2 ceot1 meng2." },
+                { word: "荔枝窩村", jyutping: "lai6 zi1 wo1 cyun1", mandarin: "荔枝窩村", english: "Lai Chi Wo Village", example: "荔枝窩村好寧靜。", example_jyutping: "lai6 zi1 wo1 cyun1 hou2 ning4 zing6." }
+            ],
+            "西貢區": [
+                { word: "西貢", jyutping: "sai1 gung3", mandarin: "西貢", english: "Sai Kung", example: "西貢有西貢市中心。", example_jyutping: "sai1 gung3 jau5 sai1 gung3 si5 zung1 sam1." },
+                { word: "清水灣", jyutping: "cing1 seoi2 waan1", mandarin: "清水灣", english: "Clear Water Bay", example: "清水灣有大學。", example_jyutping: "cing1 seoi2 waan1 jau5 daai6 hok6." }
+            ],
+            "沙田區": [
+                { word: "沙田", jyutping: "saa1 tin4", mandarin: "沙田", english: "Sha Tin", example: "沙田有新城市廣場。", example_jyutping: "saa1 tin4 jau5 san1 sing4 si5 gwong2 coeng4." },
+                { word: "馬鞍山", jyutping: "maa5 on1 saan1", mandarin: "馬鞍山", english: "Ma On Shan", example: "馬鞍山有好多新樓。", example_jyutping: "maa5 on1 saan1 jau5 hou2 do1 san1 lau4." },
+                { word: "車公廟", jyutping: "ce1 gung1 miu6", mandarin: "車公廟", english: "Che Kung Temple", example: "車公廟好出名。", example_jyutping: "ce1 gung1 miu6 hou2 ceot1 meng2." },
+                { word: "城門河", jyutping: "sing4 mun4 ho4", mandarin: "城門河", english: "Shing Mun River", example: "城門河好長。", example_jyutping: "sing4 mun4 ho4 hou2 coeng4." },
+                { word: "科學園", jyutping: "fo1 hok6 jyun2", mandarin: "科學園", english: "Science Park", example: "科學園有好多公司。", example_jyutping: "fo1 hok6 jyun2 jau5 hou2 do1 gung1 si1." },
+                { word: "香港中文大學", jyutping: "hoeng1 gong2 zung1 man4 daai6 hok6", mandarin: "香港中文大學", english: "The Chinese University of Hong Kong", example: "香港中文大學好出名。", example_jyutping: "hoeng1 gong2 zung1 man4 daai6 hok6 hou2 ceot1 meng2." },
+                { word: "沙田馬場", jyutping: "saa1 tin4 maa5 coeng4", mandarin: "沙田馬場", english: "Sha Tin Racecourse", example: "沙田馬場有賽馬。", example_jyutping: "saa1 tin4 maa5 coeng4 jau5 coi3 maa5." },
+                { word: "望夫石", jyutping: "mong6 fu1 sek6", mandarin: "望夫石", english: "Wang Fu Stone", example: "望夫石有傳說。", example_jyutping: "mong6 fu1 sek6 jau5 cyun4 syut3." }
+            ],
+            "大埔區": [
+                { word: "大埔", jyutping: "daai6 bou3", mandarin: "大埔", english: "Tai Po", example: "大埔有大埔超級城。", example_jyutping: "daai6 bou3 jau5 daai6 bou3 ciu1 kap1 sing4." },
+                { word: "大埔墟", jyutping: "daai6 bou3 heoi1", mandarin: "大埔墟", english: "Tai Po Market", example: "大埔墟有街市。", example_jyutping: "daai6 bou3 heoi1 jau5 gaai1 si5." },
+                { word: "林村許願樹", jyutping: "lam4 cyun1 heoi2 jyun6 syu6", mandarin: "林村許願樹", english: "Lam Tsuen Wishing Tree", example: "林村許願樹好出名。", example_jyutping: "lam4 cyun1 heoi2 jyun6 syu6 hou2 ceot1 meng2." },
+                { word: "香港鐵路博物館", jyutping: "hoeng1 gong2 tit3 lou6 bok3 mat6 gun2", mandarin: "香港鐵路博物館", english: "Hong Kong Railway Museum", example: "香港鐵路博物館有好多火車。", example_jyutping: "hoeng1 gong2 tit3 lou6 bok3 mat6 gun2 jau5 hou2 do1 fo2 ce1." },
+                { word: "嘉道理農場", jyutping: "gaa1 dou6 lei5 nung4 coeng4", mandarin: "嘉道理農場", english: "Kadoorie Farm", example: "嘉道理農場好靚。", example_jyutping: "gaa1 dou6 lei5 nung4 coeng4 hou2 leng3." },
+                { word: "大美督", jyutping: "daai6 mei5 duk1", mandarin: "大美督", english: "Tai Mei Tuk", example: "大美督有水塘。", example_jyutping: "daai6 mei5 duk1 jau5 seoi2 tong4." }
+            ],
+            "荃灣區": [
+                { word: "荃灣廣場", jyutping: "cyun4 waan1 gwong2 coeng4", mandarin: "荃灣廣場", english: "Tsuen Wan Plaza", example: "去荃灣廣場食飯。", example_jyutping: "heoi3 cyun4 waan1 gwong2 coeng4 sik6 faan6." },
+                { word: "海之戀商場", jyutping: "hoi2 zi1 lyun2 soeng1 coeng4", mandarin: "海之戀商場", english: "The LOHAS", example: "海之戀商場好大。", example_jyutping: "hoi2 zi1 lyun2 soeng1 coeng4 hou2 daai6." },
+                { word: "如心廣場", jyutping: "jyu4 sam1 gwong2 coeng4", mandarin: "如心廣場", english: "Nina Mall", example: "如心廣場有好多店。", example_jyutping: "jyu4 sam1 gwong2 coeng4 jau5 hou2 do1 dim3." },
+                { word: "荃新天地", jyutping: "cyun4 san1 tin1 dei6", mandarin: "荃新天地", english: "Tsuen Wan New Town", example: "荃新天地好熱鬧。", example_jyutping: "cyun4 san1 tin1 dei6 hou2 jit6 naau6." },
+                { word: "D・PARK愉景新城", jyutping: "D・PARK jyu4 ging2 san1 sing4", mandarin: "D・PARK愉景新城", english: "D·PARK", example: "D・PARK有好多食肆。", example_jyutping: "D・PARK jau5 hou2 do1 sik6 si6." },
+                { word: "三棟屋博物館", jyutping: "saam1 dung6 uk1 bok3 mat6 gun2", mandarin: "三棟屋博物館", english: "Sam Tung Uk Museum", example: "三棟屋博物館有歷史。", example_jyutping: "saam1 dung6 uk1 bok3 mat6 gun2 jau5 lik6 si2." },
+                { word: "南豐紗廠", jyutping: "naam4 fung1 saa1 cong2", mandarin: "南豐紗廠", english: "The Mills", example: "南豐紗廠而家變咗文創地方。", example_jyutping: "naam4 fung1 saa1 cong2 ji4 gaa1 bin3 zo2 man4 cong3 dei6 fong1." },
+                { word: "西方寺", jyutping: "sai1 fong1 zi6", mandarin: "西方寺", english: "Western Monastery", example: "西方寺好寧靜。", example_jyutping: "sai1 fong1 zi6 hou2 ning4 zing6." },
+                { word: "圓玄學院", jyutping: "jyun4 jyun4 hok6 jyun2", mandarin: "圓玄學院", english: "Yuen Yuen Institute", example: "圓玄學院好出名。", example_jyutping: "jyun4 jyun4 hok6 jyun2 hou2 ceot1 meng2." },
+                { word: "竹林禪院", jyutping: "zuk1 lam4 sim4 jyun2", mandarin: "竹林禪院", english: "Chuk Lam Sim Yuen", example: "竹林禪院好大。", example_jyutping: "zuk1 lam4 sim4 jyun2 hou2 daai6." },
+                { word: "城門郊野公園", jyutping: "sing4 mun4 gaau1 je5 gung1 jyun2", mandarin: "城門郊野公園", english: "Shing Mun Country Park", example: "城門郊野公園好靚。", example_jyutping: "sing4 mun4 gaau1 je5 gung1 jyun2 hou2 leng3." },
+                { word: "大帽山郊野公園", jyutping: "daai6 mou6 saan1 gaau1 je5 gung1 jyun2", mandarin: "大帽山郊野公園", english: "Tai Mo Shan Country Park", example: "大帽山好高。", example_jyutping: "daai6 mou6 saan1 gaau1 je5 gung1 jyun2 hou2 gou1." },
+                { word: "馬灣", jyutping: "maa5 waan1", mandarin: "馬灣", english: "Ma Wan", example: "馬灣有挪亞方舟。", example_jyutping: "maa5 waan1 jau5 no4 aa3 fong1 zau1." },
+                { word: "挪亞方舟", jyutping: "no4 aa3 fong1 zau1", mandarin: "挪亞方舟", english: "Noah's Ark", example: "挪亞方舟好有特色。", example_jyutping: "no4 aa3 fong1 zau1 hou2 jau5 dak6 sik1." },
+                { word: "深井", jyutping: "sam1 zeng2", mandarin: "深井", english: "Sham Tseng", example: "深井有好多海鮮。" }
+            ],
+            "屯門區": [
+                { word: "屯門", jyutping: "tyun4 mun4", mandarin: "屯門", english: "Tuen Mun", example: "屯門有屯門市中心。", example_jyutping: "tyun4 mun4 jau5 tyun4 mun4 si5 zung1 sam1." },
+                { word: "屯門站", jyutping: "tyun4 mun4 zaam6", mandarin: "屯門站", english: "Tuen Mun Station", example: "屯門站好方便。", example_jyutping: "tyun4 mun4 zaam6 hou2 fong1 bin6." },
+                { word: "黃金海岸", jyutping: "wong4 gam1 hoi2 ngon6", mandarin: "黃金海岸", english: "Gold Coast", example: "黃金海岸好靚。", example_jyutping: "wong4 gam1 hoi2 ngon6 hou2 leng3." }
+            ],
+            "元朗區": [
+                { word: "元朗", jyutping: "jyun4 long5", mandarin: "元朗", english: "Yuen Long", example: "元朗有元朗大馬路。", example_jyutping: "jyun4 long5 jau5 jyun4 long5 daai6 maa5 lou6." },
+                { word: "天水圍", jyutping: "tin1 seoi2 wai4", mandarin: "天水圍", english: "Tin Shui Wai", example: "天水圍有 Wetland Park。", example_jyutping: "tin1 seoi2 wai4 jau5 Wetland Park." },
+                { word: "香港濕地公園", jyutping: "hoeng1 gong2 sap1 dei6 gung1 jyun2", mandarin: "香港濕地公園", english: "Hong Kong Wetland Park", example: "香港濕地公園好出名。", example_jyutping: "hoeng1 gong2 sap1 dei6 gung1 jyun2 hou2 ceot1 meng2." },
+                { word: "米埔自然保護區", jyutping: "mai5 bou3 zi6 jin4 bou2 wu6 keoi1", mandarin: "米埔自然保護區", english: "Mai Po Nature Reserve", example: "米埔自然保護區有好多雀鳥。", example_jyutping: "mai5 bou3 zi6 jin4 bou2 wu6 keoi1 jau5 hou2 do1 zoek3 niu5." }
+            ]
+        };
+
+        // Get all unique categories
+        function getCategories() {
+            const cats = [...new Set(dictionary.map(item => item.category))];
+            return cats.sort();
+        }
+
+        // Render category list in sidebar
+        function renderCategoryList() {
+            const container = document.getElementById('category-list');
+            container.innerHTML = '';
+            
+            const categories = getCategories();
+            
+            // All words button
+            const allBtn = document.createElement('button');
+            allBtn.className = `category-btn w-full text-left px-4 py-2.5 rounded-2xl text-sm flex items-center gap-x-3 border border-transparent hover:bg-zinc-800 active:bg-zinc-700`;
+            allBtn.innerHTML = `
+                <i class="fa-solid fa-list w-4 text-sky-400"></i>
+                <span class="font-medium">全部詞彙</span>
+            `;
+            allBtn.onclick = () => showAllWords();
+            container.appendChild(allBtn);
+            
+            categories.forEach(cat => {
+                const count = dictionary.filter(w => w.category === cat).length;
+                const btn = document.createElement('button');
+                btn.className = `category-btn w-full text-left px-4 py-2.5 rounded-2xl text-sm flex items-center justify-between gap-x-3 border border-transparent hover:bg-zinc-800 active:bg-zinc-700`;
+                
+                btn.innerHTML = `
+                    <div class="flex items-center gap-x-3">
+                        <i class="fa-solid fa-folder w-4 text-sky-400"></i>
+                        <span class="font-medium">${cat}</span>
+                    </div>
+                    <span class="text-xs px-2 py-0.5 bg-zinc-700 rounded-full text-zinc-400">${count}</span>
+                `;
+                btn.onclick = () => filterByCategory(cat, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        let currentFilterCategory = null;
+        let currentSearchTerm = '';
+
+        function filterByCategory(category, activeBtn) {
+            document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active', 'bg-sky-600', 'text-white'));
+            activeBtn.classList.add('active', 'bg-sky-600', 'text-white');
+            
+            currentFilterCategory = category;
+            currentSearchTerm = '';
+            document.getElementById('main-search').value = '';
+            
+            document.getElementById('current-category-title').innerText = category;
+            
+            // Show reminder badge only for 地區 category
+            const reminder = document.getElementById('district-reminder');
+            if (reminder) {
+                if (category === "地區") {
+                    reminder.classList.remove('hidden');
+                    reminder.classList.add('flex');
+                } else {
+                    reminder.classList.add('hidden');
+                    reminder.classList.remove('flex');
+                }
+            }
+            
+            renderVocabularyGrid();
+            
+            // Auto close sidebar on mobile after selecting a category
+            if (window.innerWidth < 768) {
+                const sidebar = document.getElementById('sidebar');
+                const backdrop = document.getElementById('sidebar-backdrop');
+                if (sidebar) {
+                    sidebar.classList.add('hidden');
+                    sidebar.classList.remove('flex');
+                }
+                if (backdrop) backdrop.remove();
+            }
+        }
+
+        function showAllWords() {
+            document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active', 'bg-sky-600', 'text-white'));
+            currentFilterCategory = null;
+            currentSearchTerm = '';
+            document.getElementById('main-search').value = '';
+            document.getElementById('current-category-title').innerText = '全部詞彙';
+            
+            const reminder = document.getElementById('district-reminder');
+            if (reminder) {
+                reminder.classList.add('hidden');
+                reminder.classList.remove('flex');
+            }
+            
+            renderVocabularyGrid();
+            
+            // Auto close sidebar on mobile
+            if (window.innerWidth < 768) {
+                const sidebar = document.getElementById('sidebar');
+                const backdrop = document.getElementById('sidebar-backdrop');
+                if (sidebar) {
+                    sidebar.classList.add('hidden');
+                    sidebar.classList.remove('flex');
+                }
+                if (backdrop) backdrop.remove();
+            }
+        }
+
+        function filterMainGrid() {
+            currentSearchTerm = document.getElementById('main-search').value.toLowerCase().trim();
+            renderVocabularyGrid();
+        }
+
+        // Render vocabulary grid
+        function renderVocabularyGrid(filteredData = null) {
+            const grid = document.getElementById('vocabulary-grid');
+            grid.innerHTML = '';
+            
+            let data = filteredData || dictionary;
+            
+            if (currentFilterCategory) {
+                data = data.filter(item => item.category === currentFilterCategory);
+            }
+            
+            if (currentSearchTerm) {
+                data = data.filter(item => 
+                    item.word.toLowerCase().includes(currentSearchTerm) ||
+                    item.jyutping.toLowerCase().includes(currentSearchTerm) ||
+                    item.mandarin.includes(currentSearchTerm) ||
+                    item.english.toLowerCase().includes(currentSearchTerm) ||
+                    item.example.includes(currentSearchTerm)
+                );
+            }
+            
+            // Word count badge next to category title removed
+            
+            if (data.length === 0) {
+                grid.innerHTML = `
+                    <div class="text-center py-12 text-zinc-500">
+                        <i class="fa-solid fa-search text-4xl mb-4"></i>
+                        <p>找不到相關詞彙</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            data.forEach(item => {
+                const card = document.createElement('div');
+                card.className = `word-card bg-zinc-800 border border-zinc-700 rounded-3xl p-5 flex flex-col cursor-pointer`;
+                
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <div class="cantonese-text text-xl md:text-2xl">${item.word}</div>
+                            <div class="jyutping text-lg">${item.jyutping}</div>
+                        </div>
+                        <div class="flex items-center gap-x-2">
+                            <div class="text-xs px-3 py-1 bg-zinc-700 rounded-full text-zinc-400">${item.category}</div>
+                            <button class="speak-btn text-sky-400 hover:text-sky-300 p-2" title="聽發音">
+                                <i class="fa-solid fa-volume-up text-xl"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="text-sm text-zinc-400 mb-3">${item.mandarin} ｜ ${item.english}</div>
+                    
+                    <div class="mt-auto pt-3 border-t border-zinc-700">
+                        <div class="text-sm flex items-start justify-between gap-x-2">
+                            <div class="flex-1">
+                                <span class="text-sky-400">例句：</span> 
+                                <span class="text-zinc-300">${item.example}</span>
+                                ${item.example_jyutping ? `<div class="text-xs text-sky-300 mt-0.5 ml-8">${item.example_jyutping}</div>` : ''}
+                            </div>
+                            <button class="example-speak-btn text-sky-400 hover:text-sky-300 p-1 flex-shrink-0" title="聽例句發音">
+                                <i class="fa-solid fa-volume-up"></i>
+                            </button>
+                        </div>
+                        <div class="text-xs text-zinc-500 mt-2">${item.tip}</div>
+                    </div>
+                `;
+                
+                const speakBtn = card.querySelector('.speak-btn');
+                speakBtn.onclick = (e) => {
+                    e.stopImmediatePropagation();
+                    speakWord(item.word);
+                };
+
+                // New: Speak the example sentence
+                const exampleSpeakBtn = card.querySelector('.example-speak-btn');
+                if (exampleSpeakBtn) {
+                    exampleSpeakBtn.onclick = (e) => {
+                        e.stopImmediatePropagation();
+                        speakWord(item.example);
+                    };
+                }
+                
+                // Special behavior for 地區 category
+                if (item.category === "地區") {
+                    card.onclick = () => showDistrictAttractions(item.word);
+                } else {
+                    card.onclick = () => {
+                        // For other categories, just show basic info (can be expanded later)
+                        alert(`${item.word}\n\n${item.jyutping}\n\n${item.example}\n\n${item.tip}`);
+                    };
+                }
+                
+                grid.appendChild(card);
+            });
+        }
+
+        // Show district attractions modal
+        function showDistrictAttractions(districtName) {
+            const modal = document.getElementById('district-modal');
+            const titleEl = document.getElementById('district-modal-title');
+            const jyutpingEl = document.getElementById('district-modal-jyutping');
+            const attractionsContainer = document.getElementById('district-attractions');
+            
+            titleEl.innerText = districtName;
+            
+            // Find the district word to get Jyutping
+            const districtWord = dictionary.find(w => w.word === districtName && w.category === "地區");
+            if (districtWord) {
+                jyutpingEl.innerText = districtWord.jyutping;
+            }
+            
+            attractionsContainer.innerHTML = '';
+            
+            const attractions = districtAttractions[districtName] || [];
+            
+            if (attractions.length === 0) {
+                attractionsContainer.innerHTML = `
+                    <div class="col-span-2 text-center py-8 text-zinc-500">
+                        <p>暫時未有此區的景點資料</p>
+                    </div>
+                `;
+            } else {
+                attractions.forEach(attr => {
+                    const card = document.createElement('div');
+                    card.className = `attraction-card bg-zinc-800 border border-zinc-700 rounded-2xl p-4 flex flex-col`;
+                    
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <div class="cantonese-text text-xl">${attr.word}</div>
+                                <div class="jyutping">${attr.jyutping}</div>
+                            </div>
+                            <button class="speak-btn text-sky-400 hover:text-sky-300 p-2" title="聽發音">
+                                <i class="fa-solid fa-volume-up text-xl"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="text-sm text-zinc-400 mb-3">${attr.english}</div>
+                        
+                        <div class="mt-auto pt-3 border-t border-zinc-700 text-sm">
+                            <div class="flex items-start justify-between gap-x-2">
+                                <div class="flex-1">
+                                    <span class="text-sky-400">例句：</span> 
+                                    <span class="text-zinc-300">${attr.example}</span>
+                                    ${attr.example_jyutping ? `<div class="text-xs text-sky-300 mt-0.5 ml-8">${attr.example_jyutping}</div>` : ''}
+                                </div>
+                                <button class="example-speak-btn text-sky-400 hover:text-sky-300 p-1 flex-shrink-0" title="聽例句發音">
+                                    <i class="fa-solid fa-volume-up"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    const speakBtn = card.querySelector('.speak-btn');
+                    speakBtn.onclick = (e) => {
+                        e.stopImmediatePropagation();
+                        speakWord(attr.word);
+                    };
+                    
+                    // Example sentence speak button
+                    const exampleSpeakBtn = card.querySelector('.example-speak-btn');
+                    if (exampleSpeakBtn) {
+                        exampleSpeakBtn.onclick = (e) => {
+                            e.stopImmediatePropagation();
+                            speakWord(attr.example);
+                        };
+                    }
+                    
+                    attractionsContainer.appendChild(card);
+                });
+            }
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function hideDistrictModal() {
+            const modal = document.getElementById('district-modal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        // Contact Modal
+        function showContactModal() {
+            const modal = document.getElementById('contact-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function hideContactModal() {
+            const modal = document.getElementById('contact-modal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        // Speech Troubleshooting Modal
+        function showSpeechTroubleshootModal() {
+            const modal = document.getElementById('speech-troubleshoot-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function hideSpeechTroubleshootModal() {
+            const modal = document.getElementById('speech-troubleshoot-modal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        // Speak function - Optimized Web Speech API version
+        let voicesLoaded = false;
+        let availableVoices = [];
+
+        function loadVoices() {
+            availableVoices = window.speechSynthesis.getVoices();
+            voicesLoaded = true;
+        }
+
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = loadVoices;
+            setTimeout(loadVoices, 150);
+        }
+
+        function speakWord(text) {
+            if (!('speechSynthesis' in window)) {
+                alert('你的瀏覽器不支援語音朗讀功能。');
+                return;
+            }
+            if (!text || text.trim() === '') return;
+
+            window.speechSynthesis.cancel();
+
+            const utterance = new SpeechSynthesisUtterance(text);
+
+            if (!voicesLoaded) {
+                availableVoices = window.speechSynthesis.getVoices();
+            }
+
+            // 優先尋找粵語 / 香港中文語音
+            let selectedVoice = availableVoices.find(v =>
+                v.lang.toLowerCase().includes('yue') ||
+                v.lang === 'zh-HK' ||
+                v.name.toLowerCase().includes('cantonese')
+            );
+
+            if (!selectedVoice) {
+                selectedVoice = availableVoices.find(v =>
+                    v.lang === 'zh-HK' || 
+                    v.lang.toLowerCase().includes('hong kong') ||
+                    v.name.toLowerCase().includes('hong kong')
+                );
+            }
+
+            if (selectedVoice) {
+                utterance.voice = selectedVoice;
+            } else {
+                utterance.lang = 'zh-HK';
+            }
+
+            utterance.rate = 0.93;
+            utterance.pitch = 1.03;
+            utterance.volume = 0.95;
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // High Frequency Phrases
+        function showDailyPhrasesModal() {
+            const modal = document.getElementById('high-frequency-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            const content = document.getElementById('high-frequency-content');
+            content.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-zinc-800 border border-zinc-700 rounded-2xl p-4 flex justify-between items-start">
+                        <div>
+                            <div class="cantonese-text text-lg">你食飯未呀？</div>
+                            <div class="jyutping">nei5 sik6 faan6 mei6 aa3?</div>
+                            <div class="text-xs text-zinc-400 mt-1">你吃飯了嗎？</div>
+                        </div>
+                        <button onclick="speakWord('你食飯未呀？')" class="text-sky-400 hover:text-sky-300 p-1">
+                            <i class="fa-solid fa-volume-up"></i>
+                        </button>
+                    </div>
+                    <div class="bg-zinc-800 border border-zinc-700 rounded-2xl p-4 flex justify-between items-start">
+                        <div>
+                            <div class="cantonese-text text-lg">你得唔得閑？</div>
+                            <div class="jyutping">nei5 dak1 m4 dak1 haan4?</div>
+                            <div class="text-xs text-zinc-400 mt-1">你有空嗎？</div>
+                        </div>
+                        <button onclick="speakWord('你得唔得閑？')" class="text-sky-400 hover:text-sky-300 p-1">
+                            <i class="fa-solid fa-volume-up"></i>
+                        </button>
+                    </div>
+                    <div class="bg-zinc-800 border border-zinc-700 rounded-2xl p-4 flex justify-between items-start">
+                        <div>
+                            <div class="cantonese-text text-lg">呢個幾錢？</div>
+                            <div class="jyutping">ni1 go3 gei2 cin2?</div>
+                            <div class="text-xs text-zinc-400 mt-1">這個多少錢？</div>
+                        </div>
+                        <button onclick="speakWord('呢個幾錢？')" class="text-sky-400 hover:text-sky-300 p-1">
+                            <i class="fa-solid fa-volume-up"></i>
+                        </button>
+                    </div>
+                    <div class="bg-zinc-800 border border-zinc-700 rounded-2xl p-4 flex justify-between items-start">
+                        <div>
+                            <div class="cantonese-text text-lg">冇問題！</div>
+                            <div class="jyutping">mou5 man6 tai4!</div>
+                            <div class="text-xs text-zinc-400 mt-1">沒問題！</div>
+                        </div>
+                        <button onclick="speakWord('冇問題！')" class="text-sky-400 hover:text-sky-300 p-1">
+                            <i class="fa-solid fa-volume-up"></i>
+                        </button>
+                    </div>
+                    <div class="bg-zinc-800 border border-zinc-700 rounded-2xl p-4 flex justify-between items-start">
+                        <div>
+                            <div class="cantonese-text text-lg">等陣去邊？</div>
+                            <div class="jyutping">dang2 zan6 heoi3 bin1?</div>
+                            <div class="text-xs text-zinc-400 mt-1">等一下要去哪裡？</div>
+                        </div>
+                        <button onclick="speakWord('等陣去邊？')" class="text-sky-400 hover:text-sky-300 p-1">
+                            <i class="fa-solid fa-volume-up"></i>
+                        </button>
+                    </div>
+                    <div class="bg-zinc-800 border border-zinc-700 rounded-2xl p-4 flex justify-between items-start">
+                        <div>
+                            <div class="cantonese-text text-lg">有咩搞？</div>
+                            <div class="jyutping">jau5 me1 gau2?</div>
+                            <div class="text-xs text-zinc-400 mt-1">有什麼事？</div>
+                        </div>
+                        <button onclick="speakWord('有咩搞？')" class="text-sky-400 hover:text-sky-300 p-1">
+                            <i class="fa-solid fa-volume-up"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function hideDailyPhrasesModal() {
+            const modal = document.getElementById('high-frequency-modal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        // Mobile Sidebar Toggle (Overlay style on mobile)
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            
+            if (sidebar.classList.contains('hidden')) {
+                sidebar.classList.remove('hidden');
+                sidebar.classList.add('flex');
+                
+                // Add backdrop on mobile
+                if (window.innerWidth < 768) {
+                    const backdrop = document.createElement('div');
+                    backdrop.id = 'sidebar-backdrop';
+                    backdrop.className = 'fixed inset-0 bg-black/60 z-[55] md:hidden';
+                    backdrop.onclick = () => toggleMobileSidebar();
+                    document.body.appendChild(backdrop);
+                }
+            } else {
+                sidebar.classList.add('hidden');
+                sidebar.classList.remove('flex');
+                
+                // Remove backdrop
+                const backdrop = document.getElementById('sidebar-backdrop');
+                if (backdrop) backdrop.remove();
+            }
+        }
+
+        // Word count display removed as per user request
+
+        // Initialize
+        function initializeApp() {
+            renderCategoryList();
+            renderVocabularyGrid();
+            
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.getVoices();
+            }
+            
+            console.log('%c[廣東話自學素材] 增強版初始化完成 (446 詞 + 地區景點)', 'color:#64748b');
+        }
+        
+        window.onload = initializeApp;
+    </script>
+</body>
+</html>
